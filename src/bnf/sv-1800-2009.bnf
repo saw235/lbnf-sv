@@ -1,21 +1,13 @@
--- A.1 Source Text
+-- A.1 Source Text (Done)
 -- A.1.1 Library Source Text (Done)
 rules library_text ::= [library_description];
 
--- A.2.1.3 Type declarations (Done)
-
-rules data_declaration ::= 
-[ const ] [ var ] [ lifetime ] data_type_or_implicit list_of_variable_decl_assignments ;
-| type_declaration 
-| package_import_declaration
-| virtual_interface_declaration 
-
-
-
 rules library_description ::= library_declaration | include_statement 
                             | config_declaration | ";";
-rules library_declaration ::= "library" library_identifier [file_path_spec]
-                        | "library" library_identifier [file_path_spec]  "-incdir" file_path_spec [file_path_spec_comma]  ";";
+
+rules library_declaration ::= 
+"library" library_identifier [file_path_spec] ";"
+| "library" library_identifier [file_path_spec] "-incdir" [file_path_spec] ";"
 
 rules include_statement ::= "include" file_path_spec";";
 
@@ -397,6 +389,7 @@ rules use_clause ::=
 "use" library_identifier "." cell_identifier [ named_parameter_assignment ] | 
 "use" library_identifier "." cell_identifier [ named_parameter_assignment ] ":" "config";
 
+-- A.1.6 Interface items (Done)
 rules interface_or_generate_item ::= 
 [ attribute_instance ] module_common_item 
 | [ attribute_instance ] modport_declaration 
@@ -500,42 +493,42 @@ rules method_qualifier8 ::= "virtual" | "pure" "virtual" | class_item_qualifier;
 rules method_prototype ::= task_prototype | function_prototype;
 
 rules class_constructor_declaration ::= 
-"function" "new" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
-"function" "new" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new"  |
-"function" "new" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
-"function" "new" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
-"function" "new" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" "new" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" "new" "(" ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
-"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
-"function" "new" "(" ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new"  |
-"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new"  |
-"function" "new" "(" ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
-"function" "new" "(" ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
-"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
-"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
-"function" "new" "(" ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" "new" "(" ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" class_scope "new" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
-"function" class_scope "new" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new" |
-"function" class_scope "new" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
-"function" class_scope "new" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
-"function" class_scope "new" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" class_scope "new" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" class_scope "new" "(" ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
-"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
-"function" class_scope "new" "(" ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new"  |
-"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new" |
-"function" class_scope "new" "(" ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
-"function" class_scope "new" "(" ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
-"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
-"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
-"function" class_scope "new" "(" ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" class_scope "new" "(" ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
-"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new";
+"function" "new" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" |
+"function" "new" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" "new" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" "new" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" "new" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" "new" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" "new" "(" ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" |
+"function" "new" "(" tf_port_list ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" |
+"function" "new" "(" ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" "new" "(" tf_port_list ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" "new" "(" ")" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" "new" "(" ")" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" "new" "(" tf_port_list ")" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" "new" "(" tf_port_list ")" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" "new" "(" ")" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" "new" "(" ")" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" "new" "(" tf_port_list ")" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" "new" "(" tf_port_list ")" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" class_scope "new" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" |
+"function" class_scope "new" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" "new" |
+"function" class_scope "new" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" class_scope "new" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" class_scope "new" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" class_scope "new" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" class_scope "new" "(" ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" |
+"function" class_scope "new" "(" tf_port_list ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" |
+"function" class_scope "new" "(" ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" class_scope "new" "(" tf_port_list ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" "new" |
+"function" class_scope "new" "(" ")" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" class_scope "new" "(" ")" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" class_scope "new" "(" tf_port_list ")" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" class_scope "new" "(" tf_port_list ")" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction"  |
+"function" class_scope "new" "(" ")" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" class_scope "new" "(" ")" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" class_scope "new" "(" tf_port_list ")" ";" [ block_item_declaration ] "super" "." "new" ";"  [ function_statement_or_null ] "endfunction" ":" "new"  |
+"function" class_scope "new" "(" tf_port_list ")" ";" [ block_item_declaration ] "super" "." "new" "(" list_of_arguments ")" ";"  [ function_statement_or_null ] "endfunction" ":" "new";
 
 -- A.1.10 Constraints (Done)
 
@@ -610,7 +603,7 @@ rules anonymous_program_item ::= task_declaration
 | ";";
 
 -- A.2 Declarations
--- A.2.1. Declaration types
+-- A.2.1. Declaration types (Done)
 -- A.2.1.1 Module parameter declarations (Done)
 
 rules local_parameter_declaration ::= "localparam" data_type_or_implicit list_of_param_assignments | "localparam" "type" list_of_type_assignments;
@@ -677,7 +670,7 @@ rules type_declaration ::=
 
 rules lifetime ::= "static" | "automatic";
 
--- A.2.2 Declaration data types 
+-- A.2.2 Declaration data types (Done)
 -- A.2.2.1 Net and variable types (Done)
 
 rules casting_type ::= simple_type | constant_primary | signing | "string" | "const";
@@ -831,16 +824,142 @@ separator nonempty variable_port_identifier_with_variable_dimension ",";
 separator nonempty variable_identifier_with_instance_identifier ",";
 
 -- A.2.4 Declaration assignments
--- A.2.5 Declaration ranges 
--- A.2.6 Function declarations 
+-- A.2.5 Declaration ranges (Done) 
+rules unpacked_dimension ::= "[" constant_range "]" | "[" constant_expression "]";
+rules packed_dimension ::= "[" constant_range "]" | unsized_dimension ;
+rules associative_dimension ::= "[" data_type "]" | "[" "*" "]";
+rules variable_dimension ::= 
+unsized_dimension 
+| unpacked_dimension 
+| associative_dimension 
+| queue_dimension ;
+
+rules queue_dimension ::= "[" "$"  "]" | "[" "$" ":" constant_expression "]";
+rules unsized_dimension ::= "[" "]";
+
+-- A.2.6 Function declarations (Done)
+rules function_data_type_or_implicit ::= data_type_or_void | implicit_data_type ;
+rules function_declaration ::= "function" function_body_declaration | "function" lifetime function_body_declaration;
+
+rules function_body_declaration ::= 
+function_data_type_or_implicit function_identifier ";" [ tf_item_declaration ] [ function_statement_or_null ] "endfunction" 
+| function_data_type_or_implicit function_identifier ";" [ tf_item_declaration ] [ function_statement_or_null ] "endfunction" ":" function_identifier
+| function_data_type_or_implicit interface_identifier "." function_identifier ";" [ tf_item_declaration ] [ function_statement_or_null ] "endfunction"
+| function_data_type_or_implicit interface_identifier "." function_identifier ";" [ tf_item_declaration ] [ function_statement_or_null ] "endfunction" ":" function_identifier
+| function_data_type_or_implicit class_scope function_identifier ";" [ tf_item_declaration ] [ function_statement_or_null ] "endfunction"
+| function_data_type_or_implicit class_scope function_identifier ";" [ tf_item_declaration ] [ function_statement_or_null ] "endfunction" ":" function_identifier
+
+| function_data_type_or_implicit function_identifier "("  ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" 
+| function_data_type_or_implicit function_identifier "("  ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" function_identifier
+
+| function_data_type_or_implicit function_identifier "(" tf_port_list ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" 
+| function_data_type_or_implicit function_identifier "(" tf_port_list ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" function_identifier
+
+| function_data_type_or_implicit interface_identifier "." function_identifier "(" ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" 
+| function_data_type_or_implicit interface_identifier "." function_identifier "(" ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" function_identifier
+
+| function_data_type_or_implicit interface_identifier "." function_identifier "(" tf_port_list ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" 
+| function_data_type_or_implicit interface_identifier "." function_identifier "(" tf_port_list ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" function_identifier
+
+| function_data_type_or_implicit class_scope function_identifier "(" ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" 
+| function_data_type_or_implicit class_scope function_identifier "(" ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" function_identifier
+
+| function_data_type_or_implicit class_scope function_identifier "(" tf_port_list ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" 
+| function_data_type_or_implicit class_scope function_identifier "(" tf_port_list ")" ";" [ block_item_declaration ] [ function_statement_or_null ] "endfunction" ":" function_identifier;
+
+rules function_prototype ::= 
+function data_type_or_void function_identifier "(" ")" 
+| function data_type_or_void function_identifier "(" tf_port_list ")";
+
+rules dpi_import_export ::= 
+"import" dpi_spec_string dpi_function_proto ";"
+| "import" dpi_spec_string c_identifier "=" dpi_function_proto ";"
+| "import" dpi_spec_string dpi_function_import_property dpi_function_proto ";"
+| "import" dpi_spec_string dpi_function_import_property c_identifier "=" dpi_function_proto ";"
+| "import" dpi_spec_string dpi_task_proto ";"
+| "import" dpi_spec_string c_identifier "=" dpi_task_proto ";"
+| "import" dpi_spec_string dpi_task_import_property dpi_task_proto ";"
+| "import" dpi_spec_string dpi_task_import_property c_identifier "=" dpi_task_proto ";"
+| "export" dpi_spec_string "function" function_identifier ";"
+| "export" dpi_spec_string c_identifier "=" "function" function_identifier ";"
+| "export" dpi_spec_string "task" task_identifier ";"
+| "export" dpi_spec_string c_identifier "=" "task" task_identifier ";";
+
+rules dpi_spec_string ::= "\"DPI-C\"" | "\"DPI\"";
+rules dpi_function_import_property ::= "context" | "pure";
+rules dpi_task_import_property ::= "context";
+rules dpi_function_proto ::= function_prototype ;
+rules dpi_task_proto ::= task_prototype;
+
+separator tf_item_declaration "";
+separator function_statement_or_null "";
+separator block_item_declaration "";
+
 -- A.2.7 Task declarations 
--- A.2.8 Block item declarations 
+-- A.2.8 Block item declarations (Done) 
+rules block_item_declaration ::= 
+[ attribute_instance ] data_declaration 
+| [ attribute_instance ] local_parameter_declaration ";"
+| [ attribute_instance ] parameter_declaration ";"
+| [ attribute_instance ] overload_declaration 
+| [ attribute_instance ] let_declaration ;
+rules overload_declaration ::= "bind" overload_operator "function" data_type function_identifier "(" overload_proto_formals ")" ";";
+rules overload_operator ::= "+" | "++" | "–" | "– –" | "*" | "**" | "/" | "%" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "=";
+rules overload_proto_formals ::= [data_type];
+
+separator nonempty data_type ",";
+
 -- A.2.9 Interface declarations 
 -- A.2.10 Assertion declarations 
 -- A.2.11 Covergroup declarations 
 
 -- A.3 Primitive instances 
--- A.3.1 Primitive instantiation and instances 
+-- A.3.1 Primitive instantiation and instances (Done)
+
+rules gate_instantiation ::= 
+cmos_switchtype [cmos_switch_instance] ";"
+| cmos_switchtype delay3 [cmos_switch_instance] ";"
+| enable_gatetype [enable_gate_instance] ";"
+| enable_gatetype delay3 [enable_gate_instance] ";"
+| enable_gatetype drive_strength [enable_gate_instance] ";"
+| enable_gatetype drive_strength delay3 [enable_gate_instance] ";"
+| mos_switchtype [mos_switch_instance] ";"
+| mos_switchtype delay3 [mos_switch_instance] ";"
+| n_input_gatetype [n_input_gate_instance] ";"
+| n_input_gatetype delay2 [n_input_gate_instance] ";"
+| n_input_gatetype drive_strength [n_input_gate_instance] ";"
+| n_input_gatetype drive_strength delay2 [n_input_gate_instance] ";"
+| n_output_gatetype [n_output_gate_instance] ";"
+| n_output_gatetype delay2 [n_output_gate_instance] ";"
+| n_output_gatetype drive_strength [n_output_gate_instance] ";"
+| n_output_gatetype drive_strength delay2 [n_output_gate_instance] ";"
+| pass_en_switchtype [pass_enable_switch_instance] ";"
+| pass_en_switchtype delay2 [pass_enable_switch_instance] ";"
+| pass_switchtype [pass_switch_instance] ";"
+| "pulldown" [pull_gate_instance] ";"
+| "pulldown" pulldown_strength [pull_gate_instance] ";"
+| "pullup" [pull_gate_instance] ";"
+| "pullup" pullup_strength [pull_gate_instance] ";";
+
+rules cmos_switch_instance ::= maybe_name_of_instance "(" output_terminal "," input_terminal "," ncontrol_terminal "," pcontrol_terminal ")"
+rules enable_gate_instance ::= maybe_name_of_instance "(" output_terminal "," input_terminal "," enable_terminal ")"
+rules mos_switch_instance ::= maybe_name_of_instance "(" output_terminal "," input_terminal "," enable_terminal ")"
+rules n_input_gate_instance ::= maybe_name_of_instance "(" output_terminal "," [input_terminal] ")"
+rules n_output_gate_instance ::= maybe_name_of_instance "(" [output_terminal] "," input_terminal ")"
+rules pass_switch_instance ::= maybe_name_of_instance "(" inout_terminal "," inout_terminal ")"
+rules pass_enable_switch_instance ::= maybe_name_of_instance "(" inout_terminal "," inout_terminal "," enable_terminal ")"
+rules pull_gate_instance ::= maybe_name_of_instance "(" output_terminal ")"
+
+rules maybe_name_of_instance ::= | name_of_instance;
+
+separator nonempty cmos_switch_instance ",";
+separator nonempty mos_switch_instance ",";
+separator nonempty enable_gate_instance ",";
+separator nonempty n_input_gate_instance ",";
+separator nonempty n_output_gate_instance ",";
+separator nonempty pass_enable_switch_instance ",";
+separator nonempty pass_switch_instance ",";
+separator nonempty pull_gate_instance ",";
 
 -- A.3.2 Primitive strengths (Done)
 rules pulldown_strength ::= 
@@ -872,7 +991,37 @@ rules pass_switchtype ::= "tran" | "rtran";
 
 -- A.4 Instantiations 
 -- A.4.1 Instantiation 
--- A.4.1.1 Module instantiation 
+-- A.4.1.1 Module instantiation (Done)
+
+rules module_instantiation ::= module_identifier maybe_parameter_value_assignment [hierarchical_instance] ;
+rules parameter_value_assignment ::= "#" "(" maybe_list_of_parameter_assignments ")";
+rules list_of_parameter_assignments ::= [ordered_parameter_assignment] | [named_parameter_assignment] ; 
+
+rules ordered_parameter_assignment ::= param_expression;
+rules named_parameter_assignment ::= "." parameter_identifier "(" maybe_param_expression ")";
+rules hierarchical_instance ::= name_of_instance "(" maybe_list_of_port_connections ")";
+rules name_of_instance ::= instance_identifier [unpacked_dimension];
+
+rules list_of_port_connections ::= [ ordered_port_connection ] | [ named_port_connection ]; 
+rules ordered_port_connection ::= [ attribute_instance ] maybe_expression;
+rules named_port_connection ::= 
+[ attribute_instance ] "." port_identifier 
+| [ attribute_instance ] "." port_identifier "(" maybe_expression ")" 
+| [ attribute_instance ] ".*";
+
+
+rules maybe_expression ::= | expression;
+rules maybe_list_of_port_connections ::= | list_of_port_connections;
+rules maybe_param_expression ::= | param_expression;
+rules maybe_parameter_value_assignment ::= | parameter_value_assignment;
+rules maybe_list_of_parameter_assignments ::= | list_of_parameter_assignments;
+
+separator nonempty ordered_port_connection ",";
+separator nonempty named_port_connection ",";
+separator nonempty ordered_parameter_assignment ",";
+separator nonempty named_parameter_assignment ",";
+
+
 -- A.4.1.2 Interface instantiation (Done)
 rules interface_instantiation ::= 
 interface_identifier [hierarchical_instance] |
@@ -921,6 +1070,7 @@ rules udp_instance ::= "(" output_terminal "," [input_terminal] ")" | name_of_in
 
 separator nonempty udp_instance ",";
 separator nonempty input_terminal ",";
+separator nonempty output_terminal ",";
 
 -- A.6 Behavioral statements 
 -- A.6.1 Continuous assignment and net alias statements (Done)
