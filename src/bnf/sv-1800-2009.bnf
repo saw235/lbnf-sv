@@ -1,0 +1,1208 @@
+-- A.1 Source Text
+-- A.1.1 Library Source Text (Done)
+rules library_text ::= [library_description];
+
+-- A.2.1.3 Type declarations (Done)
+
+rules data_declaration ::= 
+[ const ] [ var ] [ lifetime ] data_type_or_implicit list_of_variable_decl_assignments ;
+| type_declaration 
+| package_import_declaration
+| virtual_interface_declaration 
+
+
+
+rules library_description ::= library_declaration | include_statement 
+                            | config_declaration | ";";
+rules library_declaration ::= "library" library_identifier [file_path_spec]
+                        | "library" library_identifier [file_path_spec]  "-incdir" file_path_spec [file_path_spec_comma]  ";";
+
+rules include_statement ::= "include" file_path_spec";";
+
+
+-- A.1.2 System Verilog Source Text (Done)
+rules source_text ::= timeunits_declaration [description] | [description];
+rules description ::= module_declaration 
+                    | udp_declaration 
+                    | interface_declaration 
+                    | program_declaration 
+                    | package_declaration 
+                    | [attribute_instance] package_item 
+                    | [attribute_instance] bind_directive 
+                    | config_declaration ;
+
+rules module_nonansi_header ::=  
+[ attribute_instance ] module_keyword module_identifier [ package_import_declaration ] list_of_ports ";" |
+[ attribute_instance ] module_keyword lifetime module_identifier [ package_import_declaration ] list_of_ports ";" |
+[ attribute_instance ] module_keyword module_identifier [ package_import_declaration ] parameter_port_list list_of_ports ";" |
+[ attribute_instance ] module_keyword lifetime module_identifier [ package_import_declaration ] parameter_port_list list_of_ports ";";
+
+rules module_ansi_header ::= 
+[ attribute_instance ] module_keyword module_identifier [ package_import_declaration ] ";" |
+[ attribute_instance ] module_keyword module_identifier [ package_import_declaration ] list_of_port_declarations ";" |
+[ attribute_instance ] module_keyword module_identifier [ package_import_declaration ] parameter_port_list ";" |
+[ attribute_instance ] module_keyword module_identifier [ package_import_declaration ] parameter_port_list list_of_port_declarations ";" |
+[ attribute_instance ] module_keyword lifetime module_identifier [ package_import_declaration ] ";" |
+[ attribute_instance ] module_keyword lifetime module_identifier [ package_import_declaration ] list_of_port_declarations ";" |
+[ attribute_instance ] module_keyword lifetime module_identifier [ package_import_declaration ] parameter_port_list ";" |
+[ attribute_instance ] module_keyword lifetime module_identifier [ package_import_declaration ] parameter_port_list list_of_port_declarations ";";
+
+rules module_declaration ::= 
+module_nonansi_header { module_item } "endmodule" | 
+module_nonansi_header { module_item } "endmodule" ":" module_identifier | 
+module_nonansi_header timeunits_declaration { module_item } "endmodule" | 
+module_nonansi_header timeunits_declaration { module_item } "endmodule" ":" module_identifier | 
+module_ansi_header { non_port_module_item } "endmodule" | 
+module_ansi_header { non_port_module_item } "endmodule" ":" module_identifier | 
+module_ansi_header timeunits_declaration { non_port_module_item } "endmodule" | 
+module_ansi_header timeunits_declaration { non_port_module_item } "endmodule" ":" module_identifier | 
+[ attribute_instance ] module_keyword module_identifier "( .* ) ;" { module_item } "endmodule" | 
+[ attribute_instance ] module_keyword module_identifier "( .* ) ;" { module_item } "endmodule" ":" module_identifier | 
+[ attribute_instance ] module_keyword module_identifier "( .* ) ;" timeunits_declaration { module_item } "endmodule" | 
+[ attribute_instance ] module_keyword module_identifier "( .* ) ;" timeunits_declaration { module_item } "endmodule" ":" module_identifier |
+[ attribute_instance ] module_keyword lifetime module_identifier "( .* ) ;" { module_item } "endmodule" | 
+[ attribute_instance ] module_keyword lifetime module_identifier "( .* ) ;" { module_item } "endmodule" ":" module_identifier |
+[ attribute_instance ] module_keyword lifetime module_identifier "( .* ) ;" timeunits_declaration { module_item } "endmodule" | 
+[ attribute_instance ] module_keyword lifetime module_identifier "( .* ) ;" timeunits_declaration { module_item } "endmodule" ":" module_identifier |
+"extern" module_nonansi_header |
+"extern" module_ansi_header;
+
+rules module_keyword ::= "module" | "macromodule";
+
+rules interface_declaration ::= 
+interface_nonansi_header { interface_item } "endinterface" | 
+interface_nonansi_header { interface_item } "endinterface" ":" interface_identifier  | 
+interface_nonansi_header timeunits_declaration { interface_item } "endinterface" | 
+interface_nonansi_header timeunits_declaration { interface_item } "endinterface" ":" interface_identifier  |
+interface_ansi_header { interface_item } "endinterface" | 
+interface_ansi_header { interface_item } "endinterface" ":" interface_identifier  | 
+interface_ansi_header timeunits_declaration { non_port_interface_item } "endinterface" | 
+interface_ansi_header timeunits_declaration { non_port_interface_item } "endinterface" ":" interface_identifier  |
+[ attribute_instance ] "interface" interface_identifier "( .* ) ;" { interface_item } "endinterface" |  
+[ attribute_instance ] "interface" interface_identifier "( .* ) ;" { interface_item } "endinterface" ":" interface_identifier  |
+[ attribute_instance ] "interface" interface_identifier "( .* ) ;" timeunits_declaration { interface_item } "endinterface" |  
+[ attribute_instance ] "interface" interface_identifier "( .* ) ;" timeunits_declaration { interface_item } "endinterface" ":" interface_identifier  |
+"extern" interface_nonansi_header | 
+"extern" interface_ansi_header;
+
+
+rules interface_nonansi_header ::= 
+[ attribute_instance ] "interface" interface_identifier [ package_import_declaration ] list_of_ports ";" |
+[ attribute_instance ] "interface" interface_identifier [ package_import_declaration ] parameter_port_list list_of_ports ";" |
+[ attribute_instance ] "interface" lifetime interface_identifier [ package_import_declaration ] list_of_ports ";" |
+[ attribute_instance ] "interface" lifetime interface_identifier [ package_import_declaration ] parameter_port_list list_of_ports ";";
+
+rules interface_ansi_header ::= 
+[ attribute_instance ] "interface" interface_identifier [ package_import_declaration ] ";" |
+[ attribute_instance ] "interface" interface_identifier [ package_import_declaration ] list_of_port_declarations ";" |
+[ attribute_instance ] "interface" interface_identifier [ package_import_declaration ] parameter_port_list ";" |
+[ attribute_instance ] "interface" interface_identifier [ package_import_declaration ] parameter_port_list list_of_port_declarations ";" |
+[ attribute_instance ] "interface" lifetime interface_identifier [ package_import_declaration ] ";" |
+[ attribute_instance ] "interface" lifetime interface_identifier [ package_import_declaration ] list_of_port_declarations ";" |
+[ attribute_instance ] "interface" lifetime interface_identifier [ package_import_declaration ] parameter_port_list ";" |
+[ attribute_instance ] "interface" lifetime interface_identifier [ package_import_declaration ] parameter_port_list list_of_port_declarations ";";
+
+rules program_declaration ::= 
+program_nonansi_header { program_item } "endprogram" | 
+program_nonansi_header { program_item } "endprogram" ":" program_identifier | 
+program_nonansi_header timeunits_declaration { program_item } "endprogram" | 
+program_nonansi_header timeunits_declaration { program_item } "endprogram" ":" program_identifier | 
+program_ansi_header { program_item } "endprogram" | 
+program_ansi_header { program_item } "endprogram" ":" program_identifier | 
+program_ansi_header timeunits_declaration { non_port_program_item } "endprogram" | 
+program_ansi_header timeunits_declaration { non_port_program_item } "endprogram" ":" program_identifier | 
+[ attribute_instance ] "program" program_identifier "( .* ) ;" { program_item } "endprogram" | 
+[ attribute_instance ] "program" program_identifier "( .* ) ;" { program_item } "endprogram" ":" program_identifier | 
+[ attribute_instance ] "program" program_identifier "( .* ) ;" timeunits_declaration { program_item } "endprogram" | 
+[ attribute_instance ] "program" program_identifier "( .* ) ;" timeunits_declaration { program_item } "endprogram" ":" program_identifier | 
+"extern" program_nonansi_header | 
+"extern" program_ansi_header;
+
+rules program_nonansi_header ::= 
+[ attribute_instance ] "program" program_identifier [ package_import_declaration ] list_of_ports ";" |
+[ attribute_instance ] "program" program_identifier [ package_import_declaration ] parameter_port_list list_of_ports ";" |
+[ attribute_instance ] "program" lifetime program_identifier [ package_import_declaration ] list_of_ports ";" |
+[ attribute_instance ] "program" lifetime program_identifier [ package_import_declaration ] parameter_port_list list_of_ports ";";
+
+rules program_ansi_header ::= 
+[ attribute_instance ] "program" program_identifier [ package_import_declaration ] ";" |
+[ attribute_instance ] "program" program_identifier [ package_import_declaration ] list_of_port_declarations ";" |
+[ attribute_instance ] "program" program_identifier [ package_import_declaration ] parameter_port_list ";" |
+[ attribute_instance ] "program" program_identifier [ package_import_declaration ] parameter_port_list list_of_port_declarations ";" |
+[ attribute_instance ] "program" lifetime program_identifier [ package_import_declaration ] ";" |
+[ attribute_instance ] "program" lifetime program_identifier [ package_import_declaration ] list_of_port_declarations ";" |
+[ attribute_instance ] "program" lifetime program_identifier [ package_import_declaration ] parameter_port_list ";" |
+[ attribute_instance ] "program" lifetime program_identifier [ package_import_declaration ] parameter_port_list list_of_port_declarations ";";
+
+rules checker_declaration ::= 
+"checker" checker_identifier ";" { checker_or_generate_item } "endchecker" |
+"checker" checker_identifier ";" { checker_or_generate_item } "endchecker" ":" checker_identifier |
+"checker" checker_identifier "(" ")" ";" { checker_or_generate_item } "endchecker" |
+"checker" checker_identifier "(" ")" ";" { checker_or_generate_item } "endchecker" ":" checker_identifier |
+"checker" checker_identifier "(" checker_port_list ")" ";" { checker_or_generate_item } "endchecker" |
+"checker" checker_identifier "(" checker_port_list ")" ";" { checker_or_generate_item } "endchecker" ":" checker_identifier;
+
+rules class_declaration ::= 
+"class" class_identifier ";" { class_item } "endclass" |
+"class" class_identifier ";" { class_item } "endclass" ":" class_identifier |
+"class" class_identifier "extends" class_type ";" { class_item } "endclass" |
+"class" class_identifier "extends" class_type ";" { class_item } "endclass" ":" class_identifier |
+"class" class_identifier ";" { class_item } "endclass" |
+"class" class_identifier ";" { class_item } "endclass" ":" class_identifier |
+"class" class_identifier "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass" |
+"class" class_identifier "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass"  ":" class_identifier |
+"class" class_identifier parameter_port_list ";" { class_item } "endclass" |
+"class" class_identifier parameter_port_list ";" { class_item } "endclass"  ":" class_identifier |
+"class" class_identifier parameter_port_list "extends" class_type ";" { class_item } "endclass" |
+"class" class_identifier parameter_port_list "extends" class_type ";" { class_item } "endclass"  ":" class_identifier |
+"class" class_identifier parameter_port_list ";" { class_item } "endclass" |
+"class" class_identifier parameter_port_list ";" { class_item } "endclass"  ":" class_identifier |
+"class" class_identifier parameter_port_list "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass" |
+"class" class_identifier parameter_port_list "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass"  ":" class_identifier |
+"class" lifetime class_identifier ";" { class_item } "endclass" |
+"class" lifetime class_identifier ";" { class_item } "endclass"  ":" class_identifier |
+"class" lifetime class_identifier "extends" class_type ";" { class_item } "endclass" |
+"class" lifetime class_identifier "extends" class_type ";" { class_item } "endclass"  ":" class_identifier |
+"class" lifetime class_identifier ";" { class_item } "endclass" |
+"class" lifetime class_identifier ";" { class_item } "endclass"  ":" class_identifier |
+"class" lifetime class_identifier "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass" |
+"class" lifetime class_identifier "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass"  ":" class_identifier |
+"class" lifetime class_identifier parameter_port_list ";" { class_item } "endclass" |
+"class" lifetime class_identifier parameter_port_list ";" { class_item } "endclass"  ":" class_identifier |
+"class" lifetime class_identifier parameter_port_list "extends" class_type ";" { class_item } "endclass" |
+"class" lifetime class_identifier parameter_port_list "extends" class_type ";" { class_item } "endclass"  ":" class_identifier |
+"class" lifetime class_identifier parameter_port_list ";" { class_item } "endclass" |
+"class" lifetime class_identifier parameter_port_list ";" { class_item } "endclass"  ":" class_identifier |
+"class" lifetime class_identifier parameter_port_list "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass" |
+"class" lifetime class_identifier parameter_port_list "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" class_identifier ";" { class_item } "endclass" |
+"virtual" "class" class_identifier ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" class_identifier "extends" class_type ";" { class_item } "endclass" |
+"virtual" "class" class_identifier "extends" class_type ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" class_identifier ";" { class_item } "endclass" |
+"virtual" "class" class_identifier ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" class_identifier "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass" |
+"virtual" "class" class_identifier "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" class_identifier parameter_port_list ";" { class_item } "endclass" |
+"virtual" "class" class_identifier parameter_port_list ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" class_identifier parameter_port_list "extends" class_type ";" { class_item } "endclass" |
+"virtual" "class" class_identifier parameter_port_list "extends" class_type ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" lifetime class_identifier ";" { class_item } "endclass" |
+"virtual" "class" lifetime class_identifier ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" lifetime class_identifier "extends" class_type ";" { class_item } "endclass" |
+"virtual" "class" lifetime class_identifier "extends" class_type ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" class_identifier parameter_port_list ";" { class_item } "endclass" |
+"virtual" "class" class_identifier parameter_port_list ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" class_identifier parameter_port_list "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass" |
+"virtual" "class" class_identifier parameter_port_list "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" lifetime class_identifier ";" { class_item } "endclass" |
+"virtual" "class" lifetime class_identifier ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" lifetime class_identifier "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass" |
+"virtual" "class" lifetime class_identifier "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" lifetime class_identifier parameter_port_list ";" { class_item } "endclass" |
+"virtual" "class" lifetime class_identifier parameter_port_list ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" lifetime class_identifier parameter_port_list "extends" class_type ";" { class_item } "endclass" |
+"virtual" "class" lifetime class_identifier parameter_port_list "extends" class_type ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" lifetime class_identifier parameter_port_list ";" { class_item } "endclass" |
+"virtual" "class" lifetime class_identifier parameter_port_list ";" { class_item } "endclass"  ":" class_identifier |
+"virtual" "class" lifetime class_identifier parameter_port_list "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass" |
+"virtual" "class" lifetime class_identifier parameter_port_list "extends" class_type "(" list_of_arguments ")" ";" { class_item } "endclass"  ":" class_identifier;
+
+rules package_declaration ::= 
+[ attribute_instance ] "package" package_identifier ";" [ package_with_attr ] "endpackage" |
+[ attribute_instance ] "package" package_identifier ";" [ package_with_attr ] "endpackage" ":" package_identifier | 
+[ attribute_instance ] "package" package_identifier ";" timeunits_declaration [ package_with_attr ] "endpackage" |
+[ attribute_instance ] "package" package_identifier ";" timeunits_declaration [ package_with_attr ] "endpackage" ":" package_identifier |
+[ attribute_instance ] "package" lifetime package_identifier ";" [ package_with_attr ] "endpackage" |
+[ attribute_instance ] "package" lifetime package_identifier ";" [ package_with_attr ] "endpackage" ":" package_identifier | 
+[ attribute_instance ] "package" lifetime package_identifier ";" timeunits_declaration [ package_with_attr ] "endpackage" |
+[ attribute_instance ] "package" lifetime package_identifier ";" timeunits_declaration [ package_with_attr ] "endpackage" ":" package_identifier;
+
+rules package_with_attr ::= [ attribute_instance ] package_item;
+
+rules timeunits_declaration ::= 
+"timeunit" time_literal ";" | 
+"timeunit" time_literal "/" time_literal ";" | 
+"timeprecision" time_literal ";" | 
+"timeunit" time_literal ";" "timeprecision" time_literal ";" | 
+"timeprecision" time_literal ";" "timeunit" time_literal ";";
+
+-- A.1.3 Module parameters and port (Done)
+
+rules parameter_port_list ::= 
+"#" "(" list_of_param_assignments [ parameter_port_declaration_comma ] ")" | 
+"#" "(" parameter_port_declaration [ parameter_port_declaration_comma ] ")" | 
+"#""(" ")";
+
+rules parameter_port_declaration_comma ::= "," parameter_port_declaration
+
+rules parameter_port_declaration ::= 
+parameter_declaration |
+local_parameter_declaration |
+data_type list_of_param_assignments |
+"type" list_of_type_assignments;
+
+rules list_of_ports ::= "(" [port] ")";
+
+rules list_of_port_declarations ::= 
+"("  ")" |
+"(" [attribute_instance_with_ansi_port_declaration] ")";
+
+rules attribute_instance_with_ansi_port_declaration ::= [ attribute_instance ] ansi_port_declaration;
+
+rules port_declaration ::= 
+[ attribute_instance ] inout_declaration |
+[ attribute_instance ] input_declaration |
+[ attribute_instance ] output_declaration |
+[ attribute_instance ] ref_declaration |
+[ attribute_instance ] interface_port_declaration;
+
+rules port ::= | port_expression | "." port_identifier "(" ")" | "." port_identifier "(" port_expression ")";
+
+rules port_expression ::= port_reference | "{" [port_reference] "}";
+
+rules port_reference ::= port_identifier constant_select;
+
+rules port_direction ::= "input" | "output" | "inout" | "ref";
+
+rules net_port_header ::= net_port_type | port_direction net_port_type;
+
+rules variable_port_header ::= variable_port_type | port_direction variable_port_type;
+
+rules interface_port_header ::=
+interface_identifier | interface_identifier "." modport_identifier | 
+"interface" | "interface" "." modport_identifier;
+
+rules ansi_port_declaration ::= 
+port_identifier { unpacked_dimension } |
+port_identifier { unpacked_dimension } "=" constant_expression |
+net_port_header port_identifier { unpacked_dimension } |
+net_port_header port_identifier { unpacked_dimension } "=" constant_expression |  
+interface_port_header port_identifier { unpacked_dimension } |
+interface_port_header port_identifier { unpacked_dimension } "=" constant_expression |  
+port_identifier { variable_dimension } | 
+port_identifier { variable_dimension } "=" constant_expression |
+variable_port_header port_identifier { variable_dimension } | 
+variable_port_header port_identifier { variable_dimension } "=" constant_expression | 
+"." port_identifier "(" ")" |
+"." port_identifier "(" expression ")" |
+port_direction "." port_identifier "(" ")" |
+port_direction "." port_identifier "(" expression ")";
+
+-- A.1.4 Module Items (Done)
+
+rules elaboration_system_task ::= 
+"$fatal" ";" | 
+"$fatal" "(" finish_number ")" ";" |  
+"$fatal" "(" finish_number "," list_of_arguments ")" ";" | 
+"$error" ";" | 
+"$error" "(" ")" ";" | 
+"$error" "(" list_of_arguments ")" ";" | 
+"$warning" ";" | 
+"$warning" "(" ")" ";" | 
+"$warning" "(" list_of_arguments ")" ";" | 
+"$info" ";" |
+"$info" "(" ")" ";" |
+"$info" "(" list_of_arguments ")" ";";
+
+rules finish_number ::= "0" | "1" | "2";
+
+rules module_common_item ::= module_or_generate_item_declaration 
+| interface_instantiation 
+| program_instantiation 
+| assertion_item 
+| bind_directive 
+| continuous_assign 
+| net_alias 
+| initial_construct 
+| final_construct 
+| always_construct 
+| loop_generate_construct 
+| conditional_generate_construct 
+| elaboration_system_task;
+
+rules module_item ::= port_declaration ";"
+| non_port_module_item;
+
+rules module_or_generate_item ::= [ attribute_instance ] parameter_override 
+| [ attribute_instance ] gate_instantiation 
+| [ attribute_instance ] udp_instantiation 
+| [ attribute_instance ] module_instantiation 
+| [ attribute_instance ] module_common_item;
+
+rules module_or_generate_item_declaration ::= package_or_generate_item_declaration 
+| genvar_declaration 
+| clocking_declaration 
+| "default" "clocking" clocking_identifier ";"
+| "default" "disable" "iff" expression_or_dist ";";
+
+rules non_port_module_item ::= generate_region 
+| module_or_generate_item 
+| specify_block 
+| [ attribute_instance ] specparam_declaration 
+| program_declaration 
+| module_declaration 
+| interface_declaration 
+| timeunits_declaration
+
+rules parameter_override ::= "defparam" list_of_defparam_assignments ";";
+
+rules bind_directive ::= 
+"bind" bind_target_scope bind_instantiation ";" |
+"bind" bind_target_scope ":" bind_target_instance_list bind_instantiation ";" |
+"bind" bind_target_instance bind_instantiation ";";
+
+rules bind_target_scope ::= module_identifier | interface_identifier;
+rules bind_target_instance ::= hierarchical_identifier constant_bit_select ;
+rules bind_target_instance_list ::= [bind_target_instance];
+rules bind_instantiation ::= program_instantiation | module_instantiation | interface_instantiation | checker_instantiation;
+
+-- A.1.5 Configuration source text (Done)
+
+rules config_declaration ::= 
+"config" config_identifier ";" [ local_parameter_declaration ] design_statement [ config_rule_statement ] "endconfig" |
+"config" config_identifier ";" [ local_parameter_declaration ] design_statement [ config_rule_statement ] "endconfig" ":" config_identifier;
+
+rules design_statement ::= "design" [lib_cell_combined_identifier] ";";
+
+rules lib_cell_combined_identifier ::= cell_identifier | library_identifier "." cell_identifier;
+
+rules config_rule_statement ::= 
+default_clause liblist_clause ";"
+| inst_clause liblist_clause ";"
+| inst_clause use_clause ";"
+| cell_clause liblist_clause ";"
+| cell_clause use_clause ";";
+
+rules default_clause ::= "default";
+rules inst_clause ::= "instance" inst_name; 
+rules inst_name ::= topmodule_identifier [instance_identifier_with_dot]; 
+rules instance_identifier_with_dot ::= "." instance_identifier;
+
+rules cell_clause ::= 
+"cell" cell_identifier |
+"cell" library_identifier "." cell_identifier;
+
+rules liblist_clause ::= liblist [library_identifier];
+
+rules use_clause ::= 
+"use" cell_identifier | 
+"use" cell_identifier ":" "config" | 
+"use" library_identifier "." cell_identifier | 
+"use" library_identifier "." cell_identifier ":" "config" | 
+"use" [named_parameter_assignment] | 
+"use" [named_parameter_assignment] ":" "config" | 
+"use" cell_identifier [ named_parameter_assignment ] | 
+"use" cell_identifier [ named_parameter_assignment ] ":" "config" |
+"use" library_identifier "." cell_identifier [ named_parameter_assignment ] | 
+"use" library_identifier "." cell_identifier [ named_parameter_assignment ] ":" "config";
+
+rules interface_or_generate_item ::= 
+[ attribute_instance ] module_common_item 
+| [ attribute_instance ] modport_declaration 
+| [ attribute_instance ] extern_tf_declaration
+
+rules extern_tf_declaration ::= "extern" method_prototype ";" | "extern" "forkjoin" task_prototype ";"
+
+rules interface_item ::= port_declaration ";" | non_port_interface_item;
+
+rules non_port_interface_item ::= generate_region 
+| interface_or_generate_item 
+| program_declaration 
+| interface_declaration 
+| timeunits_declaration
+
+-- A.1.7 Program items (Done)
+rules program_item ::= port_declaration ";" | non_port_program_item;
+
+
+rules non_port_program_item ::= [ attribute_instance ] continuous_assign 
+| [ attribute_instance ] module_or_generate_item_declaration 
+| [ attribute_instance ] initial_construct 
+| [ attribute_instance ] final_construct 
+| [ attribute_instance ] concurrent_assertion_item 
+| [ attribute_instance ] timeunits_declaration
+| program_generate_item ;
+
+rules program_generate_item ::= loop_generate_construct 
+| conditional_generate_construct 
+| generate_region 
+| elaboration_system_task;
+
+-- A.1.8 Checker items (Done)
+
+rules checker_port_list ::= [checker_port_item];
+rules checker_port_item ::= 
+[ attribute_instance ] property_formal_type port_identifier [variable_dimension] |
+[ attribute_instance ] property_formal_type port_identifier [variable_dimension] "=" property_actual_arg ; 
+
+rules checker_or_generate_item ::= checker_or_generate_item_declaration 
+| initial_construct
+| checker_always_construct
+| final_construct
+| assertion_item
+| checker_generate_item;
+
+rules checker_or_generate_item_declaration ::= 
+data_declaration |
+"rand" data_declaration |
+function_declaration |
+assertion_item_declaration |
+covergroup_declaration  |
+overload_declaration |
+genvar_declaration |
+clocking_declaration |
+"default" "clocking" clocking_identifier ";" |
+"default" "disable" "iff" expression_or_dist ";" |
+";";
+
+rules checker_generate_item ::= loop_generate_construct
+| conditional_generate_construct
+| generate_region
+| elaboration_system_task;
+
+rules checker_always_construct ::= "always" statement;
+
+-- A.1.9 Class items (Done)
+rules class_item ::= 
+[ attribute_instance ] class_property 
+| [ attribute_instance ] class_method 
+| [ attribute_instance ] class_constraint 
+| [ attribute_instance ] class_declaration 
+| [ attribute_instance ] covergroup_declaration 
+| local_parameter_declaration ";"
+| parameter_declaration ";"
+| ";";
+
+rules class_property ::= [property_qualifier] data_declaration 
+| "const" [ class_item_qualifier ] data_type const_identifier ";"
+| "const" [ class_item_qualifier ] data_type const_identifier "=" constant_expression ";";
+
+rules class_method ::= 
+[ method_qualifier ] task_declaration 
+| [ method_qualifier ] function_declaration 
+| "extern" [ method_qualifier ] method_prototype ";"
+| [ method_qualifier ] class_constructor_declaration 
+| "extern" [ method_qualifier ] class_constructor_prototype;
+
+rules class_constructor_prototype ::=  "function" "new" "(" ")" ";" | "function" "new" "(" tf_port_list ")" ";";
+
+rules class_constraint ::= constraint_prototype | constraint_declaration;
+
+rules class_item_qualifier ::= "static" | "protected" | "local";
+
+rules property_qualifier ::= random_qualifier | class_item_qualifier;
+
+rules random_qualifier ::= "rand" | "randc";
+
+rules method_qualifier8 ::= "virtual" | "pure" "virtual" | class_item_qualifier;
+
+rules method_prototype ::= task_prototype | function_prototype;
+
+rules class_constructor_declaration ::= 
+"function" "new" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
+"function" "new" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new"  |
+"function" "new" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
+"function" "new" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
+"function" "new" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" "new" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" "new" "(" ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
+"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
+"function" "new" "(" ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new"  |
+"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new"  |
+"function" "new" "(" ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
+"function" "new" "(" ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
+"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
+"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
+"function" "new" "(" ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" "new" "(" ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" class_scope "new" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
+"function" class_scope "new" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new" |
+"function" class_scope "new" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
+"function" class_scope "new" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
+"function" class_scope "new" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" class_scope "new" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" class_scope "new" "(" ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
+"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" |
+"function" class_scope "new" "(" ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new"  |
+"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } { function_statement_or_null } "endfunction" ":" "new" |
+"function" class_scope "new" "(" ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
+"function" class_scope "new" "(" ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
+"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction"  |
+"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction"  |
+"function" class_scope "new" "(" ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" class_scope "new" "(" ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" ";"  { function_statement_or_null } "endfunction" ":" "new"  |
+"function" class_scope "new" "(" tf_port_list ")" ";" { block_item_declaration } "super" "." "new" "(" list_of_arguments ")" ";"  { function_statement_or_null } "endfunction" ":" "new";
+
+-- A.1.10 Constraints (Done)
+
+rules constraint_declaration ::= 
+"constraint" constraint_identifier constraint_block |
+"static" "constraint" constraint_identifier constraint_block;
+
+rules constraint_block ::= "{" [constraint_block_item] "}";
+
+rules constraint_block_item ::= "solve" solve_before_list "before" solve_before_list ";" | constraint_expression;
+
+rules solve_before_list ::= [solve_before_primary];
+
+rules solve_before_primary ::= 
+hierarchical_identifier select | 
+implicit_class_handle "." hierarchical_identifier select | 
+class_scope hierarchical_identifier select;
+
+rules constraint_expression ::= expression_or_dist ";" 
+| expression "–>" constraint_set 
+| "if" "(" expression ")" constraint_set
+| "if" "(" expression ")" constraint_set "else" constraint_set 
+| "foreach" "(" ps_or_hierarchical_array_identifier ")" constraint_set
+| "foreach" "(" ps_or_hierarchical_array_identifier loop_variables ")" constraint_set;
+
+rules constraint_set ::= constraint_expression | "{" [constraint_expression] "}";
+
+rules dist_list ::= [dist_item]; 
+rules dist_item ::= value_range | value_range dist_weight;
+rules dist_weight ::= ":=" expression | ":/" expression;
+
+rules constraint_prototype ::= 
+"constraint" constraint_identifier ";" |
+"static" "constraint" constraint_identifier ";" |
+constraint_prototype_qualifier "constraint" constraint_identifier ";" |
+constraint_prototype_qualifier "static" "constraint" constraint_identifier ";" ;
+
+rules constraint_prototype_qualifier ::= "extern" | "pure";
+
+rules extern_constraint_declaration ::= 
+"constraint" class_scope constraint_identifier constraint_block
+"static" "constraint" class_scope constraint_identifier constraint_block
+
+rules identifier_list ::= [identifier];
+
+-- A.1.11 Package Item (Done)
+rules package_item ::= package_or_generate_item_declaration | anonymous_program | package_export_declaration | timeunits_declaration;
+
+rules package_or_generate_item_declaration ::= net_declaration 
+| data_declaration 
+| task_declaration 
+| function_declaration 
+| checker_declaration 
+| dpi_import_export 
+| extern_constraint_declaration 
+| class_declaration 
+| class_constructor_declaration 
+| local_parameter_declaration ";"
+| parameter_declaration ";"
+| covergroup_declaration 
+| overload_declaration 
+| assertion_item_declaration 
+| ";";
+
+rules anonymous_program ::= "program" ";" [anonymous_program_item] "endprogram";
+
+rules anonymous_program_item ::= task_declaration 
+| function_declaration 
+| class_declaration 
+| covergroup_declaration 
+| class_constructor_declaration 
+| ";";
+
+-- A.2 Declarations
+-- A.2.1. Declaration types
+-- A.2.1.1 Module parameter declarations (Done)
+
+rules local_parameter_declaration ::= "localparam" data_type_or_implicit list_of_param_assignments | "localparam" "type" list_of_type_assignments;
+rules parameter_declaration ::= "parameter" data_type_or_implicit list_of_param_assignments | "parameter" "type" list_of_type_assignments;
+rules specparam_declaration ::= 
+"specparam" list_of_specparam_assignments ";" |
+"specparam" packed_dimension list_of_specparam_assignments ";";
+
+-- A.2.1.2 Port declarations (Done)
+rules inout_declaration ::= "inout" net_port_type list_of_port_identifiers;
+rules input_declaration ::= "input" net_port_type list_of_port_identifiers | "input" variable_port_type list_of_variable_identifiers;
+rules output_declaration ::= "output" net_port_type list_of_port_identifiers | "output" variable_port_type list_of_variable_port_identifiers;
+rules interface_port_declaration ::= interface_identifier list_of_interface_identifiers | interface_identifier "." modport_identifier list_of_interface_identifiers; 
+rules ref_declaration ::= "ref" variable_port_type list_of_port_identifiers;
+
+-- A.2.1.3 Type declarations (Done)
+
+rules data_declaration ::= 
+data_type_or_implicit list_of_variable_decl_assignments ";" |
+lifetime data_type_or_implicit list_of_variable_decl_assignments ";" |
+"var" data_type_or_implicit list_of_variable_decl_assignments ";" |
+"var" lifetime data_type_or_implicit list_of_variable_decl_assignments ";" |
+"const" data_type_or_implicit list_of_variable_decl_assignments ";" |
+"const" lifetime data_type_or_implicit list_of_variable_decl_assignments ";" |
+"const" "var" data_type_or_implicit list_of_variable_decl_assignments ";" |
+"const" "var" lifetime data_type_or_implicit list_of_variable_decl_assignments ";" |
+type_declaration | 
+package_import_declaration |
+virtual_interface_declaration; 
+
+rules package_import_declaration ::= "import" [package_import_item] ";";
+rules package_import_item ::= package_identifier "::" identifier | package_identifier "::" "*";
+rules package_export_declaration ::= "export" "*" "::" "*" ";" | "export" [package_import_item] ";";
+rules genvar_declaration ::= "genvar" list_of_genvar_identifiers ";"
+
+rules net_declaration ::= 
+net_type data_type_or_implicit list_of_net_decl_assignments ";" |
+net_type data_type_or_implicit delay3 list_of_net_decl_assignments ";" |
+net_type "vectored" data_type_or_implicit list_of_net_decl_assignments ";" |
+net_type "vectored" data_type_or_implicit delay3 list_of_net_decl_assignments ";" |
+net_type "scalared" data_type_or_implicit list_of_net_decl_assignments ";" |
+net_type "scalared" data_type_or_implicit delay3 list_of_net_decl_assignments ";" |
+net_type drive_strength data_type_or_implicit list_of_net_decl_assignments ";" |
+net_type drive_strength data_type_or_implicit delay3 list_of_net_decl_assignments ";" |
+net_type drive_strength "vectored" data_type_or_implicit list_of_net_decl_assignments ";" |
+net_type drive_strength "vectored" data_type_or_implicit delay3 list_of_net_decl_assignments ";" |
+net_type drive_strength "scalared" data_type_or_implicit list_of_net_decl_assignments ";" |
+net_type drive_strength "scalared" data_type_or_implicit delay3 list_of_net_decl_assignments ";" |
+net_type charge_strength data_type_or_implicit list_of_net_decl_assignments ";" |
+net_type charge_strength data_type_or_implicit delay3 list_of_net_decl_assignments ";" |
+net_type charge_strength "vectored" data_type_or_implicit list_of_net_decl_assignments ";" |
+net_type charge_strength "vectored" data_type_or_implicit delay3 list_of_net_decl_assignments ";" |
+net_type charge_strength "scalared" data_type_or_implicit list_of_net_decl_assignments ";" |
+net_type charge_strength "scalared" data_type_or_implicit delay3 list_of_net_decl_assignments ";";
+
+rules type_declaration ::= 
+"typedef" data_type type_identifier [variable_dimension] ";"
+| "typedef" interface_instance_identifier constant_bit_select "." type_identifier type_identifier ";"
+| "typedef" type_identifier ";"
+| "typedef" "enum" type_identifier ";"
+| "typedef" "struct" type_identifier ";"
+| "typedef" "union" type_identifier ";"
+| "typedef" "class" type_identifier ";";
+
+rules lifetime ::= "static" | "automatic";
+
+-- A.2.2 Declaration data types 
+-- A.2.2.1 Net and variable types (Done)
+
+rules casting_type ::= simple_type | constant_primary | signing | "string" | "const";
+
+rules data_type ::= 
+integer_vector_type [ packed_dimension ] |
+integer_vector_type signing [ packed_dimension ] |
+integer_atom_type |
+integer_atom_type signing |
+non_integer_type | 
+struct_union "{" [ struct_union_member ] "}" [ packed_dimension ]| 
+struct_union "packed" "{" [ struct_union_member ] "}" [ packed_dimension ]| 
+struct_union "packed" signing "{" [ struct_union_member ] "}" [ packed_dimension ]| 
+"enum" "{" [enum_name_declaration] "}" [ packed_dimension ] | 
+"enum" enum_base_type "{" [enum_name_declaration] "}" [ packed_dimension ] | 
+"string"| 
+"chandle"| 
+"virtual" interface_identifier | 
+"virtual" "interface" interface_identifier | 
+type_identifier [ packed_dimension ] | 
+class_scope type_identifier [ packed_dimension ] | 
+package_scope type_identifier [ packed_dimension ] | 
+class_type | 
+"event"| 
+ps_covergroup_identifier | 
+type_reference;
+
+rules data_type_or_implicit ::= data_type | implicit_data_type;
+
+rules implicit_data_type ::= 
+[ packed_dimension ] |
+signing [ packed_dimension ]; 
+
+rules enum_base_type ::= 
+integer_atom_type 
+| integer_atom_type signing 
+| integer_vector_type 
+| integer_vector_type packed_dimension 
+| integer_vector_type signing  
+| integer_vector_type signing packed_dimension 
+| type_identifier
+| type_identifier [ packed_dimension ]
+
+rules enum_name_declaration ::= 
+enum_identifier |
+enum_identifier "=" constant_expression |
+enum_identifier "[" integral_number "]" |
+enum_identifier "[" integral_number "]" "=" constant_expression|
+enum_identifier "[" integral_number ":" integral_number "]"  |
+enum_identifier "[" integral_number ":" integral_number "]" "=" constant_expression;
+
+rules class_scope ::= class_type "::";
+
+rules class_type ::= 
+ps_class_identifier |
+ps_class_identifier parameter_value_assignment |
+[ scoped_class_identified_maybe_param_value_assignment ];
+
+rules scoped_class_identified_maybe_param_value_assignment ::= "::" class_identifier | "::" class_identifier parameter_value_assignment;
+
+rules integer_type ::= integer_vector_type | integer_atom_type;
+
+rules integer_atom_type ::= "byte" | "shortint" | "int" | "longint" | "integer" | "time";
+rules integer_vector_type ::= "bit" | "logic" | "reg";
+rules non_integer_type ::= "shortreal" | "real" | "realtime";
+rules net_type ::= "supply0" | "supply1" | "tri" | "triand" | "trior" | "trireg"| "tri0" | "tri1" | "uwire"| "wire" | "wand" | "wor";
+
+rules net_port_type ::= data_type_or_implicit | net_type data_type_or_implicit; 
+rules variable_port_type ::= var_data_type;
+rules var_data_type ::= data_type | "var" data_type_or_implicit;
+
+rules signing ::= "signed" | "unsigned";
+rules simple_type ::= integer_type | non_integer_type | ps_type_identifier | ps_parameter_identifier;
+
+rules struct_union_member ::= 
+[ attribute_instance ] data_type_or_void list_of_variable_decl_assignments ";" |
+[ attribute_instance ] random_qualifier data_type_or_void list_of_variable_decl_assignments ";";
+
+rules data_type_or_void ::= data_type | "void";
+rules struct_union ::= "struct" | "union" | "union" "tagged"; 
+rules type_reference ::= "type" "(" expression ")" | "type" "(" data_type ")";
+
+-- A.2.2.2 Strengths (Done)
+rules drive_strength ::= 
+"(" strength0 "," strength1 ")"
+| "(" strength1 "," strength0 ")"
+| "(" strength0 "," "highz1" ")"
+| "(" strength1 "," "highz0" ")"
+| "(" "highz0" "," strength1 ")"
+| "(" "highz1" "," strength0 ")";
+
+rules strength0 ::= "supply0" | "strong0" | "pull0" | "weak0";
+rules strength1 ::= "supply1" | "strong1" | "pull1" | "weak1";
+rules charge_strength ::= "(" "small" ")" | "(" "medium" ")" | "(" "large" ")";
+
+-- A.2.2.3 Delays (Done)
+rules delay3 ::= 
+"#" delay_value | 
+"#" "(" mintypmax_expression ")" |
+"#" "(" mintypmax_expression "," mintypmax_expression ")" |
+"#" "(" mintypmax_expression "," mintypmax_expression "," mintypmax_expression ")" ;
+
+rules delay2 ::= 
+"#" delay_value |
+ "#" "(" mintypmax_expression ")" |
+ "#" "(" mintypmax_expression "," mintypmax_expression ")";
+
+rules delay_value ::= 
+unsigned_number 
+| real_number 
+| ps_identifier 
+| time_literal 
+| "1step";
+
+-- A.2.3 Declaration lists (Done)
+
+rules list_of_defparam_assignments ::= [defparam_assignment];
+rules list_of_genvar_identifiers ::= [genvar_identifier];
+rules list_of_interface_identifiers ::= [interface_identifier_with_upacked_dimension];
+rules list_of_net_decl_assignments ::= [net_decl_assignment];
+rules list_of_param_assignments ::= [param_assignment]; 
+rules list_of_port_identifiers ::= [port_identifier_with_unpacked_dimension];
+rules list_of_udp_port_identifiers ::= [port_identifier]; 
+rules list_of_specparam_assignments ::= [specparam_assignment];
+rules list_of_tf_variable_identifiers ::= [tf_variable_identifier];
+rules list_of_type_assignments ::= [type_assignment]; 
+rules list_of_variable_decl_assignments ::= [variable_decl_assignment];
+rules list_of_variable_identifiers ::= [variable_identifier_with_variable_dimension];
+rules list_of_variable_port_identifiers ::= [variable_port_identifier_with_variable_dimension];
+rules list_of_virtual_interface_decl ::= [variable_identifier_with_instance_identifier];
+
+rules interface_identifier_with_upacked_dimension ::= interface_identifier [ unpacked_dimension ];
+rules port_identifier_with_unpacked_dimension ::= port_identifier [ unpacked_dimension ];
+rules tf_variable_identifier ::= port_identifier [ variable_dimension ] | port_identifier [ variable_dimension ] "=" expression;
+rules variable_identifier_with_variable_dimension ::=  variable_identifier [ variable_dimension ];
+rules variable_port_identifier_with_variable_dimension ::= port_identifier [ variable_dimension ] | port_identifier [ variable_dimension ] "=" constant_expression
+rules variable_identifier_with_instance_identifier ::=  variable_identifier |  variable_identifier "=" interface_instance_identifier ;
+
+separator nonempty genvar_identifier ",";
+separator nonempty interface_identifier_with_upacked_dimension ",";
+separator nonempty net_decl_assignment ",";
+separator nonempty param_assignment ",";
+separator nonempty port_identifier_with_unpacked_dimension ",";
+separator nonempty port_identifier ",";
+separator nonempty specparam_assignment ",";
+separator nonempty tf_variable_identifier ",";
+separator nonempty type_assignment "," ;
+separator nonempty variable_decl_assignment ",";
+separator nonempty variable_identified_with_variable_dimension ",";
+separator nonempty variable_port_identifier_with_variable_dimension ",";
+separator nonempty variable_identifier_with_instance_identifier ",";
+
+-- A.2.4 Declaration assignments
+-- A.2.5 Declaration ranges 
+-- A.2.6 Function declarations 
+-- A.2.7 Task declarations 
+-- A.2.8 Block item declarations 
+-- A.2.9 Interface declarations 
+-- A.2.10 Assertion declarations 
+-- A.2.11 Covergroup declarations 
+
+-- A.3 Primitive instances 
+-- A.3.1 Primitive instantiation and instances 
+
+-- A.3.2 Primitive strengths (Done)
+rules pulldown_strength ::= 
+"(" strength0 "," strength1 ")"
+| "(" strength1 "," strength0 ")"
+| "(" strength0 ")";
+
+rules pullup_strength ::= 
+"(" strength0 "," strength1 ")"
+| "(" strength1 "," strength0 ")"
+| "(" strength1 ")";
+
+-- A.3.3 Primitive terminals (Done) 
+rules enable_terminal ::= expression;
+rules inout_terminal ::= net_lvalue;
+rules input_terminal ::= expression;
+rules ncontrol_terminal ::= expression;
+rules output_terminal ::= net_lvalue;
+rules pcontrol_terminal ::= expression;
+
+-- A.3.4 Primitive gate and switch types (Done)
+rules cmos_switchtype ::= "cmos" | "rcmos";
+rules enable_gatetype ::= "bufif0" | "bufif1" | "notif0" | "notif1";
+rules n_input_gatetype ::= "and" | "nand" | "or" | "nor" | "xor" | "xnor";
+rules mos_switchtype ::= "nmos" | "pmos" | "rnmos" | "rpmos";
+rules n_output_gatetype ::= "buf" | "not";
+rules pass_en_switchtype ::= "tranif0" | "tranif1" | "rtranif1" | "rtranif0";
+rules pass_switchtype ::= "tran" | "rtran";
+
+-- A.4 Instantiations 
+-- A.4.1 Instantiation 
+-- A.4.1.1 Module instantiation 
+-- A.4.1.2 Interface instantiation (Done)
+rules interface_instantiation ::= 
+interface_identifier [hierarchical_instance] |
+interface_identifier parameter_value_assignment [hierarchical_instance] ;
+
+
+-- A.4.1.3 Program instantiation (Done)
+program_instantiation ::= 
+program_identifier [hierarchical_instance] |
+program_identifier parameter_value_assignment [hierarchical_instance] ;
+
+-- A.4.1.4 Checker instantiation 
+-- A.4.2 Generated instantiation 
+-- A.5 UDP declaration and instantiation 
+-- A.5.1 UDP declaration
+-- A.5.2 UDP ports 
+-- A.5.3 UDP body (Done)
+rules udp_body ::= combinational_body | sequential_body ;
+rules combinational_body ::= "table" [combinational_entry] "endtable";
+rules combinational_entry ::= level_input_list ":" output_symbol ";";
+rules sequential_body ::= "table" [sequential_entry] "endtable" | udp_initial_statement "table" [sequential_entry] "endtable";
+rules udp_initial_statement ::= "initial" output_port_identifier "=" init_val ";";
+rules init_val ::= "1'b0" | "1'b1" | "1'bx" | "1'bX" | "1'B0" | "1'B1" | "1'Bx" | "1'BX" | "1" | "0";
+rules sequential_entry ::= seq_input_list ":" current_state ":" next_state ";";
+rules seq_input_list ::= level_input_list | edge_input_list ;
+rules level_input_list ::= level_symbol [level_symbol];
+rules edge_input_list ::= [level_symbol] edge_indicator [level_symbol] ;
+rules edge_indicator ::= "(" level_symbol level_symbol ")" | edge_symbol ;
+rules current_state ::= level_symbol ;
+rules next_state ::= output_symbol | "-";
+rules output_symbol ::= "0" | "1" | "x" | "X";
+rules level_symbol ::= "0" | "1" | "x" | "X" | "?" | "b" | "B";
+rules edge_symbol ::= "r" | "R" | "f" | "F" | "p" | "P" | "n" | "N" | "*";
+
+separator level_symbol "";
+separator nonempty sequential_entry "";
+separator nonempty combinational_entry "";
+
+-- A.5.4 UDP instantiation (Done)
+rules udp_instantiation ::= 
+udp_identifier [ udp_instance ] ";" |
+udp_identifier delay2 [ udp_instance ] ";" |
+udp_identifier drive_strength [ udp_instance ] ";" |
+udp_identifier drive_strength delay2 [ udp_instance ] ";";
+rules udp_instance ::= "(" output_terminal "," [input_terminal] ")" | name_of_instance "(" output_terminal "," [input_terminal] ")";
+
+separator nonempty udp_instance ",";
+separator nonempty input_terminal ",";
+
+-- A.6 Behavioral statements 
+-- A.6.1 Continuous assignment and net alias statements (Done)
+rules continuous_assign ::= 
+"assign" list_of_net_assignments ";" | 
+"assign" delay3 list_of_net_assignments ";" | 
+"assign" drive_strength list_of_net_assignments ";" | 
+"assign" drive_strength delay3 list_of_net_assignments ";" | 
+"assign" list_of_variable_assignments ";" |
+"assign" delay_control list_of_variable_assignments ";";
+
+rules list_of_net_assignments ::= [net_assignment];
+rules list_of_variable_assignments ::= [variable_assignment];
+
+rules net_alias ::= "alias" net_lvalue "=" net_lvalue repeat_equal_net_lvalue ";" | 
+
+rules repeat_equal_net_lvalue ::= | "=" net_lvalue | "=" net_lvalue repeat_equal_net_lvalue;
+
+rules net_assignment ::= net_lvalue "=" expression;
+
+separator nonempty net_assignment ",";
+separator nonempty variable_assignment ",";
+
+-- A.6.2 Procedural blocks and assignments (Done)
+rules initial_construct ::= "initial" statement_or_null ;
+rules always_construct ::= always_keyword statement ;
+rules always_keyword ::= "always" | "always_comb" | "always_latch" | "always_ff" ;
+rules final_construct ::= "final" function_statement ;
+rules blocking_assignment ::= 
+variable_lvalue "=" delay_or_event_control expression 
+| nonrange_variable_lvalue "=" dynamic_array_new 
+| hierarchical_variable_identifier 
+| implicit_class_handle "." hierarchical_variable_identifier 
+| class_scope hierarchical_variable_identifier 
+| package_scope hierarchical_variable_identifier 
+select "=" class_new 
+| operator_assignment ;
+
+rules operator_assignment ::= variable_lvalue assignment_operator expression ; 
+rules assignment_operator ::= "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=" | "<<<=" | ">>>=";
+rules nonblocking_assignment ::= variable_lvalue "<=" delay_or_event_control expression | variable_lvalue "<=" expression ;
+
+rules procedural_continuous_assignment ::= 
+"assign" variable_assignment 
+| "deassign" variable_lvalue 
+| "force" variable_assignment 
+| "force" net_assignment 
+| "release" variable_lvalue 
+| "release" net_lvalue ;
+
+rules variable_assignment ::= variable_lvalue "=" expression;
+
+-- A.6.3 Parallel and sequential blocks 
+-- A.6.4 Statements (Done)
+statement_or_null ::= statement | [ attribute_instance ] ";";
+statement ::= [ attribute_instance ] statement_item | block_identifier ":" [ attribute_instance ] statement_item ;
+
+statement_item ::= 
+blocking_assignment ";"
+| nonblocking_assignment ";"
+| procedural_continuous_assignment ";"
+| case_statement 
+| conditional_statement 
+| inc_or_dec_expression ";"
+| subroutine_call_statement 
+| disable_statement 
+| event_trigger 
+| loop_statement 
+| jump_statement 
+| par_block 
+| procedural_timing_control_statement 
+| seq_block 
+| wait_statement 
+| procedural_assertion_statement 
+| clocking_drive ";"
+| randsequence_statement 
+| randcase_statement 
+| expect_property_statement ;
+
+rules function_statement ::= statement ; 
+rules function_statement_or_null ::= function_statement | [ attribute_instance ] ";";
+rules variable_identifier_list ::= [variable_identifier];
+
+separator nonempty variable_identifier ",";
+
+-- A.6.5 Timing control statements 
+-- A.6.6 Conditional statements 
+-- A.6.7 Case statements 
+-- A.6.7.1 Patterns 
+-- A.6.8 Looping statements 
+-- A.6.9 Subroutine call statements (Done)
+rules subroutine_call_statement ::= subroutine_call ";" | "void" "'" "(" function_subroutine_call ")" ;
+
+-- A.6.10 Assertion statements
+-- A.6.11 Clocking block 
+-- A.6.12 Randsequence 
+
+-- A.7 Specify section 
+-- A.7.1 Specify block declaration
+-- A.7.2 Specify path declarations 
+-- A.7.3 Specify block terminals (Done) 
+rules specify_input_terminal_descriptor ::= input_identifier | input_identifier "[" constant_range_expression "]";
+rules specify_output_terminal_descriptor ::= output_identifier | output_identifier "[" constant_range_expression "]"; 
+rules input_identifier ::= input_port_identifier | inout_port_identifier | interface_identifier"."port_identifier;
+rules output_identifier ::= output_port_identifier | inout_port_identifier | interface_identifier"."port_identifier;
+-- A.7.4 Specify path delays 
+
+-- A.7.5 System timing checks 
+-- A.7.5.1 System timing check commands
+-- A.7.5.2 System timing check command arguments 
+-- A.7.5.3 System timing check event definitions 
+
+
+-- A.8 Expressions 
+-- A.8.1 Concatenations 
+-- A.8.2 Subroutine calls 
+-- A.8.3 Expressions
+-- A.8.4 Primaries 
+-- A.8.5 Expression left-side values (Done)
+rules net_lvalue ::= 
+ps_or_hierarchical_net_identifier constant_select 
+| "{" [net_lvalue] "}"
+| assignment_pattern_net_lvalue 
+| assignment_pattern_expression_type assignment_pattern_net_lvalue ;
+
+rules variable_lvalue ::= 
+hierarchical_variable_identifier select
+| package_scope hierarchical_variable_identifier select
+| implicit_class_handle "." hierarchical_variable_identifier select
+| "{"[variable_lvalue] "}"
+| assignment_pattern_variable_lvalue 
+| assignment_pattern_expression_type assignment_pattern_variable_lvalue 
+| streaming_concatenation;
+
+rules nonrange_variable_lvalue ::= 
+hierarchical_variable_identifier nonrange_select 
+| implicit_class_handle "." hierarchical_variable_identifier nonrange_select 
+| package_scope hierarchical_variable_identifier nonrange_select;
+
+separator nonempty net_lvalue ",";
+separator nonempty variable_lvalue ",";
+
+-- A.8.6 Operators (Done) 
+rules unary_operator ::= "+" | "-" | "!" | "~" | "&" | "~&" | "|" | "~|" | "^" | "~^" | "^~";
+rules binary_operator ::= 
+"+" | "-" | "*" | "/" | "%" | "==" | "!=" | "===" | "!==" | "==?" | "!=?" | "&&" | "||" | "**"
+| "<" | "<=" | ">" | ">=" | "&" | "|" | "^" | "^~" | "~^" | ">>" | "<<" | ">>>" | "<<<"
+| "->" | "<->"; 
+rules inc_or_dec_operator ::= "++" | "--";
+rules unary_module_path_operator ::= "!" | "~" | "&" | "~&" | "|" | "~|" | "^" | "~^" | "^~";
+rules binary_module_path_operator ::= "==" | "!=" | "&&" | "||" | "&" | "|" | "^" | "^~" | "~^";
+
+
+-- A.8.7 Numbers 
+-- A.8.8 Strings
+
+-- A.9 General 
+-- A.9.1 Attributes 
+rules attribute_instance ::= "(*" [ attr_spec ] "*)";
+rules attr_spec ::= attr_name | attr_name "=" constant_expression; 
+rules attr_name ::= identifier ;
+
+separator nonempty attr_spec ",";
+
+-- A.9.2 Comments
+
+
+-- A.9.3 Identifiers 
+array_identifier ::= identifier 
+block_identifier ::= identifier 
+bin_identifier ::= identifier 
+c_identifier45 ::= [ a-zA-Z_ ] { [ a-zA-Z0-9_ ] } 
+cell_identifier ::= identifier 
+checker_identifier ::= identifier 
+class_identifier ::= identifier 
+class_variable_identifier ::= variable_identifier 
+clocking_identifier ::= identifier 
+config_identifier ::= identifier 
+const_identifier ::= identifier 
+constraint_identifier ::= identifier 
+covergroup_identifier ::= identifier 
+covergroup_variable_identifier ::= variable_identifier 
+cover_point_identifier ::= identifier 
+cross_identifier ::= identifier 
+dynamic_array_variable_identifier ::= variable_identifier 
+enum_identifier ::= identifier 
+escaped_identifier ::= "\\" {any_ASCII_character_except_white_space} white_space 
+formal_identifier ::= identifier 
+function_identifier ::= identifier 
+generate_block_identifier ::= identifier 
+genvar_identifier ::= identifier 
+hierarchical_array_identifier ::= hierarchical_identifier 
+hierarchical_block_identifier ::= hierarchical_identifier 
+hierarchical_event_identifier ::= hierarchical_identifier 
+hierarchical_identifier ::= [ "$root" "." ] { identifier constant_bit_select "." } identifier 
+hierarchical_net_identifier ::= hierarchical_identifier 
+hierarchical_parameter_identifier ::= hierarchical_identifier 
+hierarchical_property_identifier ::= hierarchical_identifier 
+hierarchical_sequence_identifier ::= hierarchical_identifier 
+hierarchical_task_identifier ::= hierarchical_identifier 
+hierarchical_tf_identifier ::= hierarchical_identifier 
+hierarchical_variable_identifier ::= hierarchical_identifier 
+identifier ::= simple_identifier | escaped_identifier 
+index_variable_identifier ::= identifier 
+interface_identifier ::= identifier 
+interface_instance_identifier ::= identifier 
+inout_port_identifier ::= identifier 
+input_port_identifier ::= identifier 
+instance_identifier ::= identifier 
+library_identifier ::= identifier 
+member_identifier ::= identifier 
+method_identifier ::= identifier 
+modport_identifier ::= identifier 
+module_identifier ::= identifier 
+net_identifier ::= identifier 
+output_port_identifier ::= identifier 
+package_identifier ::= identifier 
+package_scope ::= package_identifier "::" | "$unit" "::"
+parameter_identifier ::= identifier 
+port_identifier ::= identifier 
+production_identifier ::= identifier 
+program_identifier ::= identifier 
+property_identifier ::= identifier 
+ps_class_identifier ::= [ package_scope ] class_identifier 
+ps_covergroup_identifier ::= [ package_scope ] covergroup_identifier 
+ps_identifier ::= [ package_scope ] identifier 
+ps_or_hierarchical_array_identifier ::= [ implicit_class_handle "." | class_scope | package_scope ] hierarchical_array_identifier 
+ps_or_hierarchical_net_identifier ::= [ package_scope ] net_identifier | hierarchical_net_identifier
+ps_or_hierarchical_property_identifier ::= [ package_scope ] property_identifier | hierarchical_property_identifier 
+ps_or_hierarchical_sequence_identifier ::= [ package_scope ] sequence_identifier | hierarchical_sequence_identifier 
+ps_or_hierarchical_tf_identifier ::= [ package_scope ] tf_identifier | hierarchical_tf_identifier 
+ps_parameter_identifier ::= [ package_scope | class_scope ] parameter_identifier | { generate_block_identifier [ [ constant_expression ] ] "." } parameter_identifier 
+ps_type_identifier ::= [ "local::" | package_scope ] type_identifier 
+sequence_identifier ::= identifier 
+signal_identifier ::= identifier 
+simple_identifier45 ::= [ a-zA-Z_ ] { [ a-zA-Z0-9_$ ] } 
+specparam_identifier ::= identifier 
+system_tf_identifier46 ::= $[ a-zA-Z0-9_$ ]{ [ a-zA-Z0-9_$ ] } 
+task_identifier ::= identifier 
+tf_identifier ::= identifier 
+terminal_identifier ::= identifier 
+topmodule_identifier ::= identifier 
+type_identifier ::= identifier 
+udp_identifier ::= identifier 
+variable_identifier ::= identifier
+
+
+-- A.9.4 White space 
+
+-- Repeatables
+separator library_description "" ;
+separator nonempty file_path_spec "," ;
+separator description "";
+separator attribute_instance "";
+separator package_import_declaration "";
+separator package_with_attr "";
+separator parameter_port_declaration_comma "";
+separator nonempty port ",";
+separator nonempty attribute_instance_with_ansi_port_declaration ",";
+separator nonempty port_reference ",";
+separator nonempty bind_target_instance ",";
+separator local_parameter_declaration ";"
+separator config_rule_statement "";
+separator lib_cell_combined_identifier "";
+separator instance_identifier_with_dot "";
+separator library_identifier "";
+separator nonempty named_parameter_assignment ",";
+separator nonempty checker_port_item ",";
+separator variable_dimension "";
+separator property_qualifier "";
+separator class_item_qualifier "";
+separator method_qualifier "";
+separator constraint_block_item "";
+separator nonempty solve_before_primary ",";
+separator constraint_expression "";
+separator nonempty dist_item ",";
+separator nonempty identifier ",";
+separator nonempty package_import_item ";";
+separator nonempty struct_union_member "";
+separator nonempty enum_name_declaration ",";
+separator packed_dimension "";
+separator anonymous_program_item "";
+separator scoped_class_identified_maybe_param_value_assignment "";
+separator nonempty defparam_assignment ",";
+separator nonempty hierarchical_instance ",";
