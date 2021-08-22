@@ -266,16 +266,16 @@ interface_identifier | interface_identifier "." modport_identifier |
 "interface" | "interface" "." modport_identifier;
 
 rules ansi_port_declaration ::= 
-port_identifier { unpacked_dimension } |
-port_identifier { unpacked_dimension } "=" constant_expression |
-net_port_header port_identifier { unpacked_dimension } |
-net_port_header port_identifier { unpacked_dimension } "=" constant_expression |  
-interface_port_header port_identifier { unpacked_dimension } |
-interface_port_header port_identifier { unpacked_dimension } "=" constant_expression |  
-port_identifier { variable_dimension } | 
-port_identifier { variable_dimension } "=" constant_expression |
-variable_port_header port_identifier { variable_dimension } | 
-variable_port_header port_identifier { variable_dimension } "=" constant_expression | 
+port_identifier [ unpacked_dimension ] |
+port_identifier [ unpacked_dimension ] "=" constant_expression |
+net_port_header port_identifier [ unpacked_dimension ] |
+net_port_header port_identifier [ unpacked_dimension ] "=" constant_expression |  
+interface_port_header port_identifier [ unpacked_dimension ] |
+interface_port_header port_identifier [ unpacked_dimension ] "=" constant_expression |  
+port_identifier [ variable_dimension ] | 
+port_identifier [ variable_dimension ] "=" constant_expression |
+variable_port_header port_identifier [ variable_dimension ] | 
+variable_port_header port_identifier [ variable_dimension ] "=" constant_expression | 
 "." port_identifier "(" ")" |
 "." port_identifier "(" expression ")" |
 port_direction "." port_identifier "(" ")" |
@@ -823,7 +823,38 @@ separator nonempty variable_identified_with_variable_dimension ",";
 separator nonempty variable_port_identifier_with_variable_dimension ",";
 separator nonempty variable_identifier_with_instance_identifier ",";
 
--- A.2.4 Declaration assignments
+-- A.2.4 Declaration assignments (Done)
+rules defparam_assignment ::= hierarchical_parameter_identifier "=" constant_mintypmax_expression ;
+rules net_decl_assignment ::= net_identifier [ unpacked_dimension ] | net_identifier [ unpacked_dimension ] "=" expression ;
+rules param_assignment ::= 
+parameter_identifier [ unpacked_dimension ] 
+| parameter_identifier [ unpacked_dimension ] "=" constant_param_expression;
+
+rules specparam_assignment ::= specparam_identifier "=" constant_mintypmax_expression | pulse_control_specparam ;
+rules type_assignment ::= type_identifier | type_identifier "=" data_type;
+
+pulse_control_specparam ::= 
+"PATHPULSE$" "=" "(" reject_limit_value ")"
+| "PATHPULSE$" "=" "(" reject_limit_value "," error_limit_value ")"
+| "PATHPULSE$"specify_input_terminal_descriptor"$"specify_output_terminal_descriptor "=" "(" reject_limit_value ")"
+| "PATHPULSE$"specify_input_terminal_descriptor"$"specify_output_terminal_descriptor "=" "(" reject_limit_value "," error_limit_value ")";
+
+rules error_limit_value ::= limit_value ;
+rules reject_limit_value ::= limit_value ;
+rules limit_value ::= constant_mintypmax_expression ; 
+rules variable_decl_assignment ::= 
+variable_identifier [ variable_dimension ] maybe_assign_expression 
+| dynamic_array_variable_identifier unsized_dimension [ variable_dimension ] maybe_assign_dynamic_array_new 
+| class_variable_identifier maybe_assign_class_new;
+
+rules class_new ::= "new" | "new" expression | "new" "(" list_of_arguments ")"; 
+rules dynamic_array_new ::= "new" "[" expression "]" maybe_enclosed_expression; 
+
+rules maybe_assign_expression ::= | "=" expression;
+rules maybe_assign_dynamic_array_new ::= | "=" dynamic_array_new ;
+rules maybe_assign_class_new ::= | "=" class_new;
+rules maybe_enclosed_expression ::= |  "(" expression ")";
+
 -- A.2.5 Declaration ranges (Done) 
 rules unpacked_dimension ::= "[" constant_range "]" | "[" constant_expression "]";
 rules packed_dimension ::= "[" constant_range "]" | unsized_dimension ;
@@ -836,6 +867,8 @@ unsized_dimension
 
 rules queue_dimension ::= "[" "$"  "]" | "[" "$" ":" constant_expression "]";
 rules unsized_dimension ::= "[" "]";
+
+separator unpacked_dimension "";
 
 -- A.2.6 Function declarations (Done)
 rules function_data_type_or_implicit ::= data_type_or_void | implicit_data_type ;
@@ -891,11 +924,40 @@ rules dpi_task_import_property ::= "context";
 rules dpi_function_proto ::= function_prototype ;
 rules dpi_task_proto ::= task_prototype;
 
-separator tf_item_declaration "";
 separator function_statement_or_null "";
 separator block_item_declaration "";
 
--- A.2.7 Task declarations 
+-- A.2.7 Task declarations (Done)
+rules task_declaration ::= "task" task_body_declaration | task lifetime task_body_declaration; 
+rules task_body_declaration ::= 
+| task_identifier ";" [ tf_item_declaration ] [ statement_or_null ] "endtask" maybe_task_identifier_footer 
+| interface_identifier "." task_identifier ";" [ tf_item_declaration ] [ statement_or_null ] "endtask" maybe_task_identifier_footer 
+| class_scope task_identifier ";" [ tf_item_declaration ] [ statement_or_null ] "endtask" maybe_task_identifier_footer;
+
+| task_identifier "(" maybe_tf_port_list ")" ";" [ block_item_declaration ] [ statement_or_null ] "endtask" maybe_task_identifier_footer
+| interface_identifier "." task_identifier "(" maybe_tf_port_list ")" ";" [ block_item_declaration ] [ statement_or_null ] "endtask" maybe_task_identifier_footer
+| class_scope task_identifier "(" maybe_tf_port_list ")" ";" [ block_item_declaration ] [ statement_or_null ] "endtask" maybe_task_identifier_footer;
+
+rules tf_item_declaration ::= 
+block_item_declaration 
+| tf_port_declaration ;
+
+rules tf_port_list ::= [tf_port_item];
+rules tf_port_item ::= [ attribute_instance ] maybe_tf_port_direction maybe_var data_type_or_implicit maybe_port_expression;
+
+rules tf_port_direction ::= port_direction | "const" "ref";
+rules tf_port_declaration ::= [ attribute_instance ] tf_port_direction maybe_var data_type_or_implicit list_of_tf_variable_identifiers ";";
+rules task_prototype ::= "task" task_identifier "(" maybe_tf_port_list ")";
+
+rules maybe_task_identifier_footer ::= | ":" task_identifier;
+rules maybe_tf_port_list ::= | tf_port_list;
+rules maybe_tf_port_direction ::= | tf_port_direction;
+rules maybe_var ::= | "var";
+rules maybe_port_expression ::= |  port_identifier [ variable_dimension ] maybe_expression;
+
+separator nonempty tf_port_item ",";
+separator tf_item_declaration "";
+
 -- A.2.8 Block item declarations (Done) 
 rules block_item_declaration ::= 
 [ attribute_instance ] data_declaration 
@@ -1228,7 +1290,7 @@ rules binary_module_path_operator ::= "==" | "!=" | "&&" | "||" | "&" | "|" | "^
 -- A.8.8 Strings
 
 -- A.9 General 
--- A.9.1 Attributes 
+-- A.9.1 Attributes (Done)
 rules attribute_instance ::= "(*" [ attr_spec ] "*)";
 rules attr_spec ::= attr_name | attr_name "=" constant_expression; 
 rules attr_name ::= identifier ;
