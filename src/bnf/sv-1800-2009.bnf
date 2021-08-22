@@ -971,7 +971,34 @@ rules overload_proto_formals ::= [data_type];
 
 separator nonempty data_type ",";
 
--- A.2.9 Interface declarations 
+-- A.2.9 Interface declarations (Done)
+rules virtual_interface_declaration ::= 
+"virtual" interface_identifier maybe_parameter_value_assignment maybe_modport_identifier list_of_virtual_interface_decl ";"
+| "virtual" "interface" interface_identifier maybe_parameter_value_assignment maybe_modport_identifier list_of_virtual_interface_decl ";";
+
+rules modport_declaration ::= "modport" [modport_item] ";";
+
+rules modport_item ::= modport_identifier "(" [modport_ports_declaration]")"
+rules modport_ports_declaration ::=
+[ attribute_instance ] modport_simple_ports_declaration 
+| [ attribute_instance ] modport_tf_ports_declaration 
+| [ attribute_instance ] modport_clocking_declaration;
+
+rules modport_clocking_declaration ::= "clocking" clocking_identifier ;
+rules modport_simple_ports_declaration ::= port_direction [modport_simple_port];
+
+rules modport_simple_port ::= port_identifier | "." port_identifier "(" maybe_expression ")";
+rules modport_tf_ports_declaration ::= import_export [modport_tf_port];
+
+rules modport_tf_port ::= method_prototype | tf_identifier ;
+rules import_export ::= "import" | "export";
+
+rules maybe_modport_identifier ::= | "." modport_identifier;
+separator nonempty modport_item ",";
+separator nonempty modport_ports_declaration ",";
+separator nonempty modport_simple_port ",";
+separator nonempty modport_tf_port ",";
+
 -- A.2.10 Assertion declarations 
 -- A.2.11 Covergroup declarations 
 
@@ -1368,7 +1395,7 @@ ps_parameter_identifier ::= [ package_scope | class_scope ] parameter_identifier
 ps_type_identifier ::= [ "local::" | package_scope ] type_identifier 
 sequence_identifier ::= identifier 
 signal_identifier ::= identifier 
-simple_identifier45 ::= [ a-zA-Z_ ] { [ a-zA-Z0-9_$ ] } 
+simple_identifier ::= [ a-zA-Z_ ] { [ a-zA-Z0-9_$ ] } 
 specparam_identifier ::= identifier 
 system_tf_identifier46 ::= $[ a-zA-Z0-9_$ ]{ [ a-zA-Z0-9_$ ] } 
 task_identifier ::= identifier 
