@@ -1118,12 +1118,58 @@ interface_identifier parameter_value_assignment [hierarchical_instance] ;
 
 
 -- A.4.1.3 Program instantiation (Done)
-program_instantiation ::= 
+rules program_instantiation ::= 
 program_identifier [hierarchical_instance] |
 program_identifier parameter_value_assignment [hierarchical_instance] ;
 
--- A.4.1.4 Checker instantiation 
--- A.4.2 Generated instantiation 
+-- A.4.1.4 Checker instantiation (Done) 
+rules checker_instantiation ::= checker_identifier name_of_instance "(" maybe_list_of_checker_port_connections ")" ";";
+rules list_of_checker_port_connections ::= [ordered_checker_port_connection] | [named_checker_port_connection];
+rules ordered_checker_port_connection ::= [ attribute_instance ] maybe_property_actual_arg;
+
+rules named_checker_port_connection ::=
+[ attribute_instance ] "." port_identifier
+| [ attribute_instance ] "." port_identifier "(" maybe_property_actual_arg ")"
+| [ attribute_instance ] ".*";
+
+rules maybe_list_of_checker_port_connections ::= | list_of_checker_port_connections;
+rules maybe_property_actual_arg ::= | property_actual_arg;
+separator nonempty ordered_checker_port_connection ",";
+separator nonempty named_checker_port_connection ",";
+
+-- A.4.2 Generated instantiation (Done)
+
+rules generate_region ::= "generate" [ generate_item ] "endgenerate";
+rules loop_generate_construct ::= "for" "(" genvar_initialization ";" genvar_expression ";" genvar_iteration ")" generate_block;
+rules genvar_initialization ::= maybe_genvar genvar_identifier "=" constant_expression;
+rules genvar_iteration ::= 
+genvar_identifier assignment_operator genvar_expression 
+| inc_or_dec_operator genvar_identifier 
+| genvar_identifier inc_or_dec_operator;
+
+rules conditional_generate_construct ::= if_generate_construct | case_generate_construct ;
+rules if_generate_construct ::= "if" "(" constant_expression ")" generate_block maybe_else_generate_block;
+
+rules case_generate_construct ::= "case" "(" constant_expression ")" [ case_generate_item ] "endcase"
+rules case_generate_item ::= [constant_expression] ":" generate_block | "default" generate_block | "default" ":" generate_block ;
+
+rules generate_block ::= generate_item 
+| maybe_generate_block_identifier_header begin maybe_generate_block_identifier_footer [ generate_item ] "end" maybe_generate_block_identifier_footer;
+
+rules generate_item ::= 
+module_or_generate_item 
+| interface_or_generate_item 
+| checker_or_generate_item;
+
+rules maybe_genvar ::= | genvar;
+rules maybe_else_generate_block ::= | "else" generate_block;
+rules maybe_generate_block_identifier_footer ::= | ":" generate_block_identifier;
+rules maybe_generate_block_identifier_header ::= | generate_block_identifier ":";
+
+separator nonempty constant_expression ",";
+separator case_generate_item "";
+separator generate_item "";
+
 -- A.5 UDP declaration and instantiation 
 -- A.5.1 UDP declaration
 -- A.5.2 UDP ports 
