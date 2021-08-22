@@ -1258,7 +1258,20 @@ rules procedural_continuous_assignment ::=
 
 rules variable_assignment ::= variable_lvalue "=" expression;
 
--- A.6.3 Parallel and sequential blocks 
+-- A.6.3 Parallel and sequential blocks (Done)
+rules action_block ::= statement_or_null | maybe_statement "else" statement_or_null ;
+rules seq_block ::= 
+"begin" maybe_block_identifier_footer [ block_item_declaration ] [ statement_or_null ] 
+"end" maybe_block_identifier_footer ;
+
+rules par_block ::= 
+"fork" maybe_block_identifier_footer [ block_item_declaration ] [ statement_or_null ] join_keyword maybe_block_identifier_footer;
+
+rules join_keyword ::= "join" | "join_any" | "join_none";
+
+rules maybe_statement ::= | statement;
+rules maybe_block_identifier_footer ::= | ":" block_identifier;
+
 -- A.6.4 Statements (Done)
 statement_or_null ::= statement | [ attribute_instance ] ";";
 statement ::= [ attribute_instance ] statement_item | block_identifier ":" [ attribute_instance ] statement_item ;
@@ -1291,11 +1304,89 @@ rules variable_identifier_list ::= [variable_identifier];
 
 separator nonempty variable_identifier ",";
 
--- A.6.5 Timing control statements 
--- A.6.6 Conditional statements 
+-- A.6.5 Timing control statements (Done)
+rules procedural_timing_control_statement ::= procedural_timing_control statement_or_null;
+rules delay_or_event_control ::= delay_control | event_control | "repeat" "(" expression ")" event_control;
+rules delay_control ::= "#" delay_value | "#" "(" mintypmax_expression ")";
+rules event_control ::= 
+"@" hierarchical_event_identifier 
+| "@" "(" event_expression ")"
+| "@""*"
+| "@" "(*)"
+| "@" ps_or_hierarchical_sequence_identifier;
+
+rules event_expression ::= 
+expression maybe_iff_expression
+| edge_identifier expression maybe_iff_expression
+| sequence_instance maybe_iff_expression 
+| event_expression "or" event_expression 
+| event_expression "," event_expression 
+| "(" event_expression ")";
+
+rules procedural_timing_control ::= delay_control | event_control | cycle_delay;
+
+rules jump_statement ::= "return" maybe_expression ";" | "break" ";" | "continue" ";";
+
+rules wait_statement ::= 
+"wait" "(" expression ")" statement_or_null 
+| "wait" "fork" ";"
+| "wait_order" "(" [hierarchical_identifier] ")" action_block;
+
+rules event_trigger ::= 
+"->" hierarchical_event_identifier ";"
+|"->>" hierarchical_event_identifier ";"
+|"->>" delay_or_event_control hierarchical_event_identifier ";";
+
+rules disable_statement ::= 
+"disable" hierarchical_task_identifier ";"
+| "disable" hierarchical_block_identifier ";"
+| "disable" "fork" ";"
+
+rules maybe_iff_expression ::= | "iff" expression;
+
+-- A.6.6 Conditional statements (Done)
+rules conditional_statement ::= 
+"if" "(" cond_predicate ")" statement_or_null [ else_if_block ] maybe_else_statement_or_null 
+| unique_priority "if" "(" cond_predicate ")" statement_or_null [ else_if_block ] maybe_else_statement_or_null;
+
+rules unique_priority ::= "unique" | "unique0" | "priority";
+rules cond_predicate ::= [expression_or_cond_pattern]; 
+rules expression_or_cond_pattern ::= expression | cond_pattern; 
+rules cond_pattern ::= expression "matches" pattern;
+
+rules maybe_else_statement_or_null ::= | "else" statement_or_null;
+rules else_if_block ::= "else" "if" "(" cond_predicate ")" statement_or_null;
+
+separator else_if_block "";
+separator nonempty expression_or_cond_pattern "&&&";
+
 -- A.6.7 Case statements 
 -- A.6.7.1 Patterns 
--- A.6.8 Looping statements 
+-- A.6.8 Looping statements (Done)
+rules loop_statement ::= 
+forever statement_or_null 
+| "repeat" "(" expression ")" statement_or_null 
+| "while" "(" expression ")" statement_or_null 
+| "for" "(" for_initialization ";" expression ";" for_step ")" 
+statement_or_null 
+| "do" statement_or_null "while" "(" expression ")" ";"
+| "foreach" "(" ps_or_hierarchical_array_identifier "[" loop_variables "]" ")" statement;
+
+rules for_initialization ::= list_of_variable_assignments | [for_variable_declaration];
+rules for_variable_declaration ::= data_type variable_identifier "=" expression [variable_assignment_cont]; 
+
+rules for_step ::= [for_step_assignment];
+rules for_step_assignment ::= operator_assignment | inc_or_dec_expression | function_subroutine_call ;
+rules loop_variables ::= [maybe_index_variable_identifier];
+
+rules variable_assignment_cont ::= "," variable_identifier "=" expression; 
+rules maybe_index_variable_identifier ::= | index_variable_identifier;
+
+separator nonempty for_variable_declaration ",";
+separator variable_assignment_cont "";
+separator nonempty for_step_assignment ",";
+separator nonempty maybe_index_variable_identifier ",";
+
 -- A.6.9 Subroutine call statements (Done)
 rules subroutine_call_statement ::= subroutine_call ";" | "void" "'" "(" function_subroutine_call ")" ;
 
@@ -1320,9 +1411,92 @@ rules output_identifier ::= output_port_identifier | inout_port_identifier | int
 
 
 -- A.8 Expressions 
--- A.8.1 Concatenations 
+-- A.8.1 Concatenations (Done)
+rules concatenation ::= "{" [expression] "}";
+rules constant_concatenation ::= "{" [constant_expression] "}";
+rules constant_multiple_concatenation ::= "{" constant_expression constant_concatenation "}" ;
+rules module_path_concatenation ::= "{" [module_path_expression] "}" ;
+rules module_path_multiple_concatenation ::= "{" constant_expression module_path_concatenation "}" ;
+rules multiple_concatenation ::= "{" expression concatenation "}" ;
+rules streaming_concatenation ::= "{" stream_operator slice_size stream_concatenation "}" | "{" stream_operator stream_concatenation "}" ;
+rules stream_operator ::= ">>" | "<<" ;
+rules slice_size ::= simple_type | constant_expression;
+rules stream_concatenation ::= "{" [stream_expression] "}";
+rules stream_expression ::= expression | expression "with" "[" array_range_expression "]";
+rules array_range_expression ::= 
+expression 
+| expression ":" expression 
+| expression "+:" expression 
+| expression "-:" expression ;
+rules empty_queue ::= "{" "}" ;
+
+separator nonempty expression ",";
+separator nonempty constant_expression ",";
+separator nonempty module_path_expression ",";
+separator nonempty stream_expression ",";
+
+
 -- A.8.2 Subroutine calls 
--- A.8.3 Expressions
+-- A.8.3 Expressions (Done)
+rules inc_or_dec_expression ::= 
+inc_or_dec_operator [ attribute_instance ] variable_lvalue 
+| variable_lvalue [ attribute_instance ] inc_or_dec_operator ;
+rules conditional_expression ::= cond_predicate "?" [ attribute_instance ] expression ":" expression ;
+
+rules constant_expression ::= 
+constant_primary 
+| unary_operator [ attribute_instance ] constant_primary 
+| constant_expression binary_operator [ attribute_instance ] constant_expression 
+| constant_expression "?" [ attribute_instance ] constant_expression ":" constant_expression ;
+rules constant_mintypmax_expression ::= 
+constant_expression 
+| constant_expression ":" constant_expression ":" constant_expression ;
+
+rules constant_param_expression ::= constant_mintypmax_expression | data_type | "$" ;
+rules param_expression ::= mintypmax_expression | data_type;
+
+rules constant_range_expression ::= constant_expression | constant_part_select_range ;
+rules constant_part_select_range ::= constant_range | constant_indexed_range ;
+
+rules constant_range ::= constant_expression ":" constant_expression ;
+rules constant_indexed_range ::= 
+constant_expression "+:" constant_expression 
+| constant_expression "-:" constant_expression;
+
+rules expression ::= 
+rules primary 
+| unary_operator [ attribute_instance ] primary 
+| inc_or_dec_expression 
+| "(" operator_assignment ")"
+| expression binary_operator [ attribute_instance ] expression 
+| conditional_expression 
+| inside_expression 
+| tagged_union_expression ;
+
+rules tagged_union_expression ::= "tagged" member_identifier maybe_expression;
+
+rules inside_expression ::= expression "inside" [open_range_list];
+rules value_range ::= expression | "[" expression ":" expression "]";
+
+rules mintypmax_expression ::= expression | expression ":" expression ":" expression ;
+rules module_path_conditional_expression ::= module_path_expression "?" [ attribute_instance ] module_path_expression ":" module_path_expression ;
+
+rules module_path_expression ::= 
+module_path_primary 
+| unary_module_path_operator [ attribute_instance ] module_path_primary 
+| module_path_expression binary_module_path_operator [ attribute_instance ] 
+module_path_expression 
+| module_path_conditional_expression 
+rules module_path_mintypmax_expression ::= 
+module_path_expression 
+| module_path_expression ":" module_path_expression ":" module_path_expression;
+
+rules part_select_range ::= constant_range | indexed_range ; 
+rules indexed_range ::= expression "+:" constant_expression | expression "-:" constant_expression ; 
+rules genvar_expression ::= constant_expression; 
+
+separator open_range_list "";
+
 -- A.8.4 Primaries 
 -- A.8.5 Expression left-side values (Done)
 rules net_lvalue ::= 
@@ -1491,3 +1665,4 @@ separator anonymous_program_item "";
 separator scoped_class_identified_maybe_param_value_assignment "";
 separator nonempty defparam_assignment ",";
 separator nonempty hierarchical_instance ",";
+separator nonempty hierarchical_identifier ",";
