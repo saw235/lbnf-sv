@@ -7,15 +7,16 @@ rules LibraryDescription ::= LibraryDeclaration | IncludeStatement
 
 rules LibraryDeclaration ::= 
 "library" LibraryIdentifier [FilePathSpec] ";"
-| "library" LibraryIdentifier [FilePathSpec] "-incdir" [FilePathSpec] ";"
+| "library" LibraryIdentifier [FilePathSpec] "-incdir" [FilePathSpec] ";";
 
 rules IncludeStatement ::= "include" FilePathSpec";";
 
+rules FilePathSpec ::= String;
 
 -- A.1.2 System Verilog Source Text (Done)
 rules SourceText ::= TimeunitsDeclaration [Description] | [Description];
 rules Description ::= ModuleDeclaration 
-                    | UdpDeclaration 
+                --    | UdpDeclaration 
                     | InterfaceDeclaration 
                     | ProgramDeclaration 
                     | PackageDeclaration 
@@ -71,8 +72,8 @@ InterfaceNonAnsiHeader TimeunitsDeclaration [ InterfaceItem ] "endinterface" |
 InterfaceNonAnsiHeader TimeunitsDeclaration [ InterfaceItem ] "endinterface" ":" InterfaceIdentifier  |
 InterfaceAnsiHeader [ InterfaceItem ] "endinterface" | 
 InterfaceAnsiHeader [ InterfaceItem ] "endinterface" ":" InterfaceIdentifier  | 
-InterfaceAnsiHeader TimeunitsDeclaration { NonPortInterfaceItem } "endinterface" | 
-InterfaceAnsiHeader TimeunitsDeclaration { NonPortInterfaceItem } "endinterface" ":" InterfaceIdentifier  |
+InterfaceAnsiHeader TimeunitsDeclaration [ NonPortInterfaceItem ] "endinterface" | 
+InterfaceAnsiHeader TimeunitsDeclaration [ NonPortInterfaceItem ] "endinterface" ":" InterfaceIdentifier  |
 [ AttributeInstance ] "interface" InterfaceIdentifier "( .* ) ;" [ InterfaceItem ] "endinterface" |  
 [ AttributeInstance ] "interface" InterfaceIdentifier "( .* ) ;" [ InterfaceItem ] "endinterface" ":" InterfaceIdentifier  |
 [ AttributeInstance ] "interface" InterfaceIdentifier "( .* ) ;" TimeunitsDeclaration [ InterfaceItem ] "endinterface" |  
@@ -80,6 +81,7 @@ InterfaceAnsiHeader TimeunitsDeclaration { NonPortInterfaceItem } "endinterface"
 "extern" InterfaceNonAnsiHeader | 
 "extern" InterfaceAnsiHeader;
 
+separator NonPortInterfaceItem "";
 
 rules InterfaceNonAnsiHeader ::= 
 [ AttributeInstance ] "interface" InterfaceIdentifier [ PackageImportDeclaration ] ListOfPorts ";" |
@@ -98,20 +100,23 @@ rules InterfaceAnsiHeader ::=
 [ AttributeInstance ] "interface" Lifetime InterfaceIdentifier [ PackageImportDeclaration ] ParameterPortList ListOfPortDeclarations ";";
 
 rules ProgramDeclaration ::= 
-ProgramNonAnsiHeader { ProgramItem } "endprogram" | 
-ProgramNonAnsiHeader { ProgramItem } "endprogram" ":" ProgramIdentifier | 
-ProgramNonAnsiHeader TimeunitsDeclaration { ProgramItem } "endprogram" | 
-ProgramNonAnsiHeader TimeunitsDeclaration { ProgramItem } "endprogram" ":" ProgramIdentifier | 
-ProgramAnsiHeader { ProgramItem } "endprogram" | 
-ProgramAnsiHeader { ProgramItem } "endprogram" ":" ProgramIdentifier | 
-ProgramAnsiHeader TimeunitsDeclaration { NonPortProgramItem } "endprogram" | 
-ProgramAnsiHeader TimeunitsDeclaration { NonPortProgramItem } "endprogram" ":" ProgramIdentifier | 
-[ AttributeInstance ] "program" ProgramIdentifier "( .* ) ;" { ProgramItem } "endprogram" | 
-[ AttributeInstance ] "program" ProgramIdentifier "( .* ) ;" { ProgramItem } "endprogram" ":" ProgramIdentifier | 
-[ AttributeInstance ] "program" ProgramIdentifier "( .* ) ;" TimeunitsDeclaration { ProgramItem } "endprogram" | 
-[ AttributeInstance ] "program" ProgramIdentifier "( .* ) ;" TimeunitsDeclaration { ProgramItem } "endprogram" ":" ProgramIdentifier | 
+ProgramNonAnsiHeader [ ProgramItem ] "endprogram" | 
+ProgramNonAnsiHeader [ ProgramItem ] "endprogram" ":" ProgramIdentifier | 
+ProgramNonAnsiHeader TimeunitsDeclaration [ ProgramItem ] "endprogram" | 
+ProgramNonAnsiHeader TimeunitsDeclaration [ ProgramItem ] "endprogram" ":" ProgramIdentifier | 
+ProgramAnsiHeader [ ProgramItem ] "endprogram" | 
+ProgramAnsiHeader [ ProgramItem ] "endprogram" ":" ProgramIdentifier | 
+ProgramAnsiHeader TimeunitsDeclaration [ NonPortProgramItem ] "endprogram" | 
+ProgramAnsiHeader TimeunitsDeclaration [ NonPortProgramItem ] "endprogram" ":" ProgramIdentifier | 
+[ AttributeInstance ] "program" ProgramIdentifier "( .* ) ;" [ ProgramItem ] "endprogram" | 
+[ AttributeInstance ] "program" ProgramIdentifier "( .* ) ;" [ ProgramItem ] "endprogram" ":" ProgramIdentifier | 
+[ AttributeInstance ] "program" ProgramIdentifier "( .* ) ;" TimeunitsDeclaration [ ProgramItem ] "endprogram" | 
+[ AttributeInstance ] "program" ProgramIdentifier "( .* ) ;" TimeunitsDeclaration [ ProgramItem ] "endprogram" ":" ProgramIdentifier | 
 "extern" ProgramNonAnsiHeader | 
 "extern" ProgramAnsiHeader;
+
+separator ProgramItem "";
+separator NonPortProgramItem "";
 
 rules ProgramNonAnsiHeader ::= 
 [ AttributeInstance ] "program" ProgramIdentifier [ PackageImportDeclaration ] ListOfPorts ";" |
@@ -130,12 +135,14 @@ rules ProgramAnsiHeader ::=
 [ AttributeInstance ] "program" Lifetime ProgramIdentifier [ PackageImportDeclaration ] ParameterPortList ListOfPortDeclarations ";";
 
 rules CheckerDeclaration ::= 
-"checker" CheckerIdentifier ";" { CheckerOrGenerateItem } "endchecker" |
-"checker" CheckerIdentifier ";" { CheckerOrGenerateItem } "endchecker" ":" CheckerIdentifier |
-"checker" CheckerIdentifier "(" ")" ";" { CheckerOrGenerateItem } "endchecker" |
-"checker" CheckerIdentifier "(" ")" ";" { CheckerOrGenerateItem } "endchecker" ":" CheckerIdentifier |
-"checker" CheckerIdentifier "(" CheckerPortList ")" ";" { CheckerOrGenerateItem } "endchecker" |
-"checker" CheckerIdentifier "(" CheckerPortList ")" ";" { CheckerOrGenerateItem } "endchecker" ":" CheckerIdentifier;
+"checker" CheckerIdentifier ";" [ CheckerOrGenerateItem ] "endchecker" |
+"checker" CheckerIdentifier ";" [ CheckerOrGenerateItem ] "endchecker" ":" CheckerIdentifier |
+"checker" CheckerIdentifier "(" ")" ";" [ CheckerOrGenerateItem ] "endchecker" |
+"checker" CheckerIdentifier "(" ")" ";" [ CheckerOrGenerateItem ] "endchecker" ":" CheckerIdentifier |
+"checker" CheckerIdentifier "(" CheckerPortList ")" ";" [ CheckerOrGenerateItem ] "endchecker" |
+"checker" CheckerIdentifier "(" CheckerPortList ")" ";" [ CheckerOrGenerateItem ] "endchecker" ":" CheckerIdentifier;
+
+separator CheckerOrGenerateItem "";
 
 rules ClassDeclaration ::= 
 "class" ClassIdentifier ";" [ ClassItem ] "endclass" |
@@ -231,7 +238,7 @@ rules ParameterPortList ::=
 "#" "(" ParameterPortDeclaration [ ParameterPortDeclarationComma ] ")" | 
 "#""(" ")";
 
-rules ParameterPortDeclarationComma ::= "," ParameterPortDeclaration
+rules ParameterPortDeclarationComma ::= "," ParameterPortDeclaration;
 
 rules ParameterPortDeclaration ::= 
 ParameterDeclaration |
@@ -340,7 +347,7 @@ rules NonPortModuleItem ::= GenerateRegion
 | ProgramDeclaration 
 | ModuleDeclaration 
 | InterfaceDeclaration 
-| TimeunitsDeclaration
+| TimeunitsDeclaration;
 
 rules ParameterOverride ::= "defparam" ListOfDefParamAssignments ";";
 
@@ -398,9 +405,9 @@ rules UseClause ::=
 rules InterfaceOrGenerateItem ::= 
 [ AttributeInstance ] ModuleCommonItem 
 | [ AttributeInstance ] ModportDeclaration 
-| [ AttributeInstance ] ExternTfDeclaration
+| [ AttributeInstance ] ExternTfDeclaration;
 
-rules ExternTfDeclaration ::= "extern" MethodPrototype ";" | "extern" "forkjoin" TaskPrototype ";"
+rules ExternTfDeclaration ::= "extern" MethodPrototype ";" | "extern" "forkjoin" TaskPrototype ";";
 
 rules InterfaceItem ::= PortDeclaration ";" | NonPortInterfaceItem;
 
@@ -408,7 +415,9 @@ rules NonPortInterfaceItem ::= GenerateRegion
 | InterfaceOrGenerateItem 
 | ProgramDeclaration 
 | InterfaceDeclaration 
-| TimeunitsDeclaration
+| TimeunitsDeclaration;
+
+separator InterfaceItem "";
 
 -- A.1.7 Program items (Done)
 rules ProgramItem ::= PortDeclaration ";" | NonPortProgramItem;
@@ -575,7 +584,7 @@ rules ConstraintPrototypeQualifier ::= "extern" | "pure";
 
 rules ExternConstraintDeclaration ::= 
 "constraint" ClassScope ConstraintIdentifier ConstraintBlock
-"static" "constraint" ClassScope ConstraintIdentifier ConstraintBlock
+"static" "constraint" ClassScope ConstraintIdentifier ConstraintBlock;
 
 rules IdentifierList ::= [Ident];
 
@@ -642,7 +651,7 @@ VirtualInterfaceDeclaration;
 rules PackageImportDeclaration ::= "import" [PackageImportItem] ";";
 rules PackageImportItem ::= PackageIdentifier "::" Ident | PackageIdentifier "::" "*";
 rules PackageExportDeclaration ::= "export" "*" "::" "*" ";" | "export" [PackageImportItem] ";";
-rules GenvarDeclaration ::= "genvar" ListOfGenvarIdentifiers ";"
+rules GenvarDeclaration ::= "genvar" ListOfGenvarIdentifiers ";";
 
 rules NetDeclaration ::= 
 NetType DataTypeOrImplicit ListOfNetDeclAssignments ";" |
@@ -717,7 +726,7 @@ IntegerAtomType
 | IntegerVectorType Signing  
 | IntegerVectorType Signing PackedDimension 
 | TypeIdentifier
-| TypeIdentifier [ PackedDimension ]
+| TypeIdentifier [ PackedDimension ];
 
 rules EnumNameDeclaration ::= 
 EnumIdentifier |
@@ -811,7 +820,7 @@ rules InterfaceIdentifierWithUpackedDimension ::= InterfaceIdentifier [ Unpacked
 rules PortIdentifierWithUnpackedDimension ::= PortIdentifier [ UnpackedDimension ];
 rules TfVariableIdentifier ::= PortIdentifier [ VariableDimension ] | PortIdentifier [ VariableDimension ] "=" Expression;
 rules VariableIdentifierWithVariableDimension ::=  VariableIdentifier [ VariableDimension ];
-rules VariablePortIdentifierWithVariableDimension ::= PortIdentifier [ VariableDimension ] | PortIdentifier [ VariableDimension ] "=" ConstantExpression
+rules VariablePortIdentifierWithVariableDimension ::= PortIdentifier [ VariableDimension ] | PortIdentifier [ VariableDimension ] "=" ConstantExpression;
 rules VariableIdentifierWithInstanceIdentifier ::=  VariableIdentifier |  VariableIdentifier "=" InterfaceInstanceIdentifier ;
 
 separator nonempty GenvarIdentifier ",";
@@ -906,8 +915,8 @@ FunctionDataTypeOrImplicit FunctionIdentifier ";" [ TfItemDeclaration ] [ Functi
 | FunctionDataTypeOrImplicit ClassScope FunctionIdentifier "(" TfPortList ")" ";" [ BlockItemDeclaration ] [ FunctionStatementOrNull ] "endfunction" ":" FunctionIdentifier;
 
 rules FunctionPrototype ::= 
-function DataTypeOrVoid FunctionIdentifier "(" ")" 
-| function DataTypeOrVoid FunctionIdentifier "(" TfPortList ")";
+"function" DataTypeOrVoid FunctionIdentifier "(" ")" 
+| "function" DataTypeOrVoid FunctionIdentifier "(" TfPortList ")";
 
 rules DpiImportExport ::= 
 "import" DpiSpecString DpiFunctionProto ";"
@@ -933,12 +942,11 @@ separator FunctionStatementOrNull "";
 separator BlockItemDeclaration "";
 
 -- A.2.7 Task declarations (Done)
-rules TaskDeclaration ::= "task" TaskBodyDeclaration | task Lifetime TaskBodyDeclaration; 
+rules TaskDeclaration ::= "task" TaskBodyDeclaration | "task" Lifetime TaskBodyDeclaration; 
 rules TaskBodyDeclaration ::= 
 | TaskIdentifier ";" [ TfItemDeclaration ] [ StatementOrNull ] "endtask" MaybeTaskIdentifierFooter 
 | InterfaceIdentifier "." TaskIdentifier ";" [ TfItemDeclaration ] [ StatementOrNull ] "endtask" MaybeTaskIdentifierFooter 
-| ClassScope TaskIdentifier ";" [ TfItemDeclaration ] [ StatementOrNull ] "endtask" MaybeTaskIdentifierFooter;
-
+| ClassScope TaskIdentifier ";" [ TfItemDeclaration ] [ StatementOrNull ] "endtask" MaybeTaskIdentifierFooter
 | TaskIdentifier "(" MaybeTfPortList ")" ";" [ BlockItemDeclaration ] [ StatementOrNull ] "endtask" MaybeTaskIdentifierFooter
 | InterfaceIdentifier "." TaskIdentifier "(" MaybeTfPortList ")" ";" [ BlockItemDeclaration ] [ StatementOrNull ] "endtask" MaybeTaskIdentifierFooter
 | ClassScope TaskIdentifier "(" MaybeTfPortList ")" ";" [ BlockItemDeclaration ] [ StatementOrNull ] "endtask" MaybeTaskIdentifierFooter;
@@ -983,7 +991,7 @@ rules VirtualInterfaceDeclaration ::=
 
 rules ModportDeclaration ::= "modport" [ModportItem] ";";
 
-rules ModportItem ::= ModportIdentifier "(" [ModportPortsDeclaration]")"
+rules ModportItem ::= ModportIdentifier "(" [ModportPortsDeclaration]")";
 rules ModportPortsDeclaration ::=
 [ AttributeInstance ] ModportSimplePortsDeclaration 
 | [ AttributeInstance ] ModportTfPortsDeclaration 
@@ -1022,7 +1030,7 @@ rules AssumePropertyStatement::= "assume" "property" "(" PropertySpec ")" Action
 rules CoverPropertyStatement::= "cover" "property" "(" PropertySpec ")" StatementOrNull;
 
 rules ExpectPropertyStatement ::= "expect" "(" PropertySpec ")" ActionBlock ;
-rules CoverSequenceStatement::= "cover" "sequence" "(" MaybeClockingEvent [ "disable" "iff" "(" ExpressionOrDist ")" ] SequenceExpr ")" StatementOrNull ;
+rules CoverSequenceStatement::= "cover" "sequence" "(" MaybeClockingEvent MaybeDisableIffExpressionOrDist SequenceExpr ")" StatementOrNull ;
 rules RestrictPropertyStatement::= "restrict" "property" "(" PropertySpec ")" ";";
 
 rules PropertyInstance ::= 
@@ -1087,9 +1095,9 @@ SequenceExpr
 | "s_nexttime" "[" ConstantExpression "]" PropertyExpr 
 | "always" PropertyExpr 
 | "always" "[" CycleDelayConstRangeExpression "]" PropertyExpr 
-| "s_always" "[" constant_range"]" PropertyExpr 
+| "s_always" "[" ConstantRange"]" PropertyExpr 
 | "s_eventually" PropertyExpr 
-| "eventually" "[" constant_range "]" PropertyExpr 
+| "eventually" "[" ConstantRange "]" PropertyExpr 
 | "s_eventually" "[" CycleDelayConstRangeExpression "]" PropertyExpr 
 | PropertyExpr "until" PropertyExpr 
 | PropertyExpr "s_until" PropertyExpr 
@@ -1224,6 +1232,7 @@ rules MaybeSequenceIdentifierFooter ::= | ":" SequenceIdentifier;
 rules MaybeSequenceActualArg ::= | SequenceActualArg;
 rules MaybeLetActualArg ::= | LetActualArg;
 
+separator SequenceActualArgCont "";
 separator nonempty MaybePropertyActualArg ",";
 separator MaybePropertyActualArgCont "";
 separator AssertionVariableDeclaration "";
@@ -1236,6 +1245,7 @@ separator SequenceMatchItemCont "";
 separator nonempty MaybeSequenceActualArg ",";
 separator nonempty LetPortItem ",";
 separator nonempty MaybeLetActualArg ",";
+separator LetActualArgCont "";
 
 -- A.2.11 Covergroup declarations (Done)
 rules CovergroupDeclaration ::= 
@@ -1265,7 +1275,7 @@ rules HierarchicalBtfIdentifier ::=
 HierarchicalTfIdentifier 
 | HierarchicalBlockIdentifier 
 | HierarchicalIdentifier MethodIdentifier 
-| HierarchicalIdentifier class_scope MethodIdentifier;
+| HierarchicalIdentifier ClassScope MethodIdentifier;
 
 rules CoverPoint ::= 
 "coverpoint" Expression BinsOrEmpty
@@ -1308,9 +1318,7 @@ TransItem
 | TransItem "[""=" RepeatRange "]";
 
 rules TransItem ::= RangeList ;
-RepeatRange ::= 
-Expression 
-| Expression ":" Expression;
+rules RepeatRange ::= Expression | Expression ":" Expression;
 
 rules CoverCross ::=
 "cross" ListOfCoverpoints  SelectBinsOrEmpty
@@ -1327,10 +1335,10 @@ rules SelectBinsOrEmpty ::=
 
 rules BinsSelectionOrOption ::= 
 [ AttributeInstance ] CoverageOption 
-| [ AttributeInstance ] bins_selection;
+| [ AttributeInstance ] BinsSelection;
 
 
-rules bins_selection ::= 
+rules BinsSelection ::= 
 BinsKeyword BinIdentifier "=" SelectExpression
 | BinsKeyword BinIdentifier "=" SelectExpression "iff" "(" Expression ")" ;
 
@@ -1361,6 +1369,7 @@ rules MaybeIffExpression ::= | "iff" "(" Expression ")";
 rules MaybeCoverageEvent ::= | CoverageEvent;
 rules MaybeCovergroupIdentifierFooter ::= | ":" CovergroupIdentifier;
 
+separator BinsSelectionOrOptionSemicolon "";
 separator CoverageSpecOrOption "";
 separator BinsOrOptionsSemicolon "";
 separator nonempty ValueRange ",";
@@ -1398,14 +1407,14 @@ CmosSwitchtype [CmosSwitchInstance] ";"
 | "pullup" [PullGateInstance] ";"
 | "pullup" PullupStrength [PullGateInstance] ";";
 
-rules CmosSwitchInstance ::= MaybeNameOfInstance "(" OutputTerminal "," InputTerminal "," NcontrolTerminal "," PcontrolTerminal ")"
-rules EnableGateInstance ::= MaybeNameOfInstance "(" OutputTerminal "," InputTerminal "," EnableTerminal ")"
-rules MosSwitchInstance ::= MaybeNameOfInstance "(" OutputTerminal "," InputTerminal "," EnableTerminal ")"
-rules NInputGateInstance ::= MaybeNameOfInstance "(" OutputTerminal "," [InputTerminal] ")"
-rules NOutputGateInstance ::= MaybeNameOfInstance "(" [OutputTerminal] "," InputTerminal ")"
-rules PassSwitchInstance ::= MaybeNameOfInstance "(" InoutTerminal "," InoutTerminal ")"
-rules PassEnableSwitchInstance ::= MaybeNameOfInstance "(" InoutTerminal "," InoutTerminal "," EnableTerminal ")"
-rules PullGateInstance ::= MaybeNameOfInstance "(" OutputTerminal ")"
+rules CmosSwitchInstance ::= MaybeNameOfInstance "(" OutputTerminal "," InputTerminal "," NcontrolTerminal "," PcontrolTerminal ")";
+rules EnableGateInstance ::= MaybeNameOfInstance "(" OutputTerminal "," InputTerminal "," EnableTerminal ")";
+rules MosSwitchInstance ::= MaybeNameOfInstance "(" OutputTerminal "," InputTerminal "," EnableTerminal ")";
+rules NInputGateInstance ::= MaybeNameOfInstance "(" OutputTerminal "," [InputTerminal] ")";
+rules NOutputGateInstance ::= MaybeNameOfInstance "(" [OutputTerminal] "," InputTerminal ")";
+rules PassSwitchInstance ::= MaybeNameOfInstance "(" InoutTerminal "," InoutTerminal ")";
+rules PassEnableSwitchInstance ::= MaybeNameOfInstance "(" InoutTerminal "," InoutTerminal "," EnableTerminal ")";
+rules PullGateInstance ::= MaybeNameOfInstance "(" OutputTerminal ")";
 
 rules MaybeNameOfInstance ::= | NameOfInstance;
 
@@ -1518,18 +1527,18 @@ GenvarIdentifier AssignmentOperator GenvarExpression
 rules ConditionalGenerateConstruct ::= IfGenerateConstruct | CaseGenerateConstruct ;
 rules IfGenerateConstruct ::= "if" "(" ConstantExpression ")" GenerateBlock MaybeElseGenerateBlock;
 
-rules CaseGenerateConstruct ::= "case" "(" ConstantExpression ")" [ CaseGenerateItem ] "endcase"
+rules CaseGenerateConstruct ::= "case" "(" ConstantExpression ")" [ CaseGenerateItem ] "endcase";
 rules CaseGenerateItem ::= [ConstantExpression] ":" GenerateBlock | "default" GenerateBlock | "default" ":" GenerateBlock ;
 
 rules GenerateBlock ::= GenerateItem 
-| MaybeGenerateBlockIdentifierHeader begin MaybeGenerateBlockIdentifierFooter [ GenerateItem ] "end" MaybeGenerateBlockIdentifierFooter;
+| MaybeGenerateBlockIdentifierHeader "begin" MaybeGenerateBlockIdentifierFooter [ GenerateItem ] "end" MaybeGenerateBlockIdentifierFooter;
 
 rules GenerateItem ::= 
 ModuleOrGenerateItem 
 | InterfaceOrGenerateItem 
 | CheckerOrGenerateItem;
 
-rules MaybeGenvar ::= | genvar;
+rules MaybeGenvar ::= | "genvar";
 rules MaybeElseGenerateBlock ::= | "else" GenerateBlock;
 rules MaybeGenerateBlockIdentifierFooter ::= | ":" GenerateBlockIdentifier;
 rules MaybeGenerateBlockIdentifierHeader ::= | GenerateBlockIdentifier ":";
@@ -1588,7 +1597,7 @@ rules ContinuousAssign ::=
 rules ListOfNetAssignments ::= [NetAssignment];
 rules ListOfVariableAssignments ::= [VariableAssignment];
 
-rules NetAlias ::= "alias" NetLvalue "=" NetLvalue RepeatEqualNetLvalue ";" | 
+rules NetAlias ::= "alias" NetLvalue "=" NetLvalue RepeatEqualNetLvalue ";" ;
 
 rules RepeatEqualNetLvalue ::= | "=" NetLvalue | "=" NetLvalue RepeatEqualNetLvalue;
 
@@ -1644,7 +1653,7 @@ rules MaybeBlockIdentifierFooter ::= | ":" BlockIdentifier;
 rules StatementOrNull ::= Statement | [ AttributeInstance ] ";";
 rules Statement ::= [ AttributeInstance ] StatementItem | BlockIdentifier ":" [ AttributeInstance ] StatementItem ;
 
-StatementItem ::= 
+rules StatementItem ::= 
 BlockingAssignment ";"
 | NonblockingAssignment ";"
 | ProceduralContinuousAssignment ";"
@@ -1708,7 +1717,7 @@ rules EventTrigger ::=
 rules DisableStatement ::= 
 "disable" HierarchicalTaskIdentifier ";"
 | "disable" HierarchicalBlockIdentifier ";"
-| "disable" "fork" ";"
+| "disable" "fork" ";";
 
 rules MaybeIffExpression ::= | "iff" Expression;
 
@@ -1720,7 +1729,7 @@ rules ConditionalStatement ::=
 rules UniquePriority ::= "unique" | "unique0" | "priority";
 rules CondPredicate ::= [ExpressionOrCondPattern]; 
 rules ExpressionOrCondPattern ::= Expression | CondPattern; 
-rules CondPattern ::= Expression "matches" pattern;
+rules CondPattern ::= Expression "matches" Pattern;
 
 rules MaybeElseStatementOrNull ::= | "else" StatementOrNull;
 rules ElseIfBlock ::= "else" "if" "(" CondPredicate ")" StatementOrNull;
@@ -1743,8 +1752,8 @@ rules CaseItem ::=
 | "default" ":" StatementOrNull;
 
 rules CasePatternItem ::= 
-pattern ":" StatementOrNull 
-| pattern "&&&" Expression ":" StatementOrNull 
+Pattern ":" StatementOrNull 
+| Pattern "&&&" Expression ":" StatementOrNull 
 | "default" StatementOrNull
 | "default" ":" StatementOrNull;
 
@@ -1767,10 +1776,43 @@ separator nonempty RandcaseItem "";
 separator nonempty CaseItemExpression ",";
 
 
--- A.6.7.1 Patterns 
+-- A.6.7.1 Patterns (Done)
+rules Pattern ::= 
+"." VariableIdentifier 
+| ".""*"
+| ConstantExpression 
+| "tagged" MemberIdentifier
+| "tagged" MemberIdentifier Pattern 
+| "'{" [Pattern] "}"
+| "'{" MemberIdentifier ":" Pattern [ PatternCont ] "}";
+rules AssignmentPattern ::= 
+"'{" [ Expression ] "}"
+| "'{" [ StructurePatternKeyExpression ]  "}"
+| "'{" [ ArrayPatternKeyExpression ] "}"
+| "'{" ConstantExpression "{" [ Expression ] "}" "}";
+
+rules PatternCont ::= "," MemberIdentifier ":" Pattern;
+rules StructurePatternKeyExpression ::= StructurePatternKey ":" Expression;
+rules ArrayPatternKeyExpression ::= ArrayPatternKey ":" Expression;
+
+rules StructurePatternKey ::= MemberIdentifier | AssignmentPatternKey ;
+rules ArrayPatternKey ::= ConstantExpression | AssignmentPatternKey ;
+rules AssignmentPatternKey ::= SimpleType | "default";
+rules AssignmentPatternExpression ::= AssignmentPatternExpressionType AssignmentPattern | AssignmentPattern;
+rules AssignmentPatternExpressionType ::= PsTypeIdentifier | PsParameterIdentifier| IntegerAtomType | TypeReference;
+rules ConstantAssignmentPatternExpression ::= AssignmentPatternExpression ;
+rules AssignmentPatternNetLvalue ::= "'""{" [NetLvalue] "}";
+rules AssignmentPatternVariableLvalue ::= "'""{" [VariableLvalue] "}";
+
+separator nonempty Pattern ",";
+separator PatternCont "";
+separator nonempty StructurePatternKeyExpression ",";
+separator nonempty ArrayPatternKeyExpression ",";
+
+
 -- A.6.8 Looping statements (Done)
 rules LoopStatement ::= 
-forever StatementOrNull 
+"forever" StatementOrNull 
 | "repeat" "(" Expression ")" StatementOrNull 
 | "while" "(" Expression ")" StatementOrNull 
 | "for" "(" ForInitialization ";" Expression ";" ForStep ")" 
@@ -1847,7 +1889,7 @@ MaybeDefault "clocking" MaybeClockingIdentifier ClockingEvent ";" [ ClockingItem
 
 rules ClockingEvent ::= 
 "@" Ident 
-| "@" "(" EventExpression ")"
+| "@" "(" EventExpression ")";
 
 rules ClockingItem ::= 
 "default" DefaultSkew ";"
@@ -1857,7 +1899,7 @@ rules ClockingItem ::=
 rules DefaultSkew ::= 
 "input" ClockingSkew 
 | "output" ClockingSkew 
-| "input" ClockingSkew output ClockingSkew;
+| "input" ClockingSkew "output" ClockingSkew;
 
 rules ClockingDirection ::= 
 "input" MaybeClockingSkew 
@@ -1868,7 +1910,7 @@ rules ClockingDirection ::=
 rules ListOfClockingDeclAssign ::= [ ClockingDeclAssign ] ;
 rules ClockingDeclAssign ::= SignalIdentifier MaybeAssignExpression; 
 
-rules ClockingSkew ::= EdgeIdentifier | EdgeIdentifier DelayControl | DelayControl 
+rules ClockingSkew ::= EdgeIdentifier | EdgeIdentifier DelayControl | DelayControl ;
 rules ClockingDrive ::= ClockvarExpression "<=" Expression | ClockvarExpression "<=" CycleDelay Expression;
 
 rules CycleDelay ::= 
@@ -1908,7 +1950,7 @@ IntegralNumber
 | PsIdentifier 
 | "(" Expression ")";
 
-rules RsCodeBlock ::= "{" [ DataDeclaration ] [ StatementOrNull ] "}"
+rules RsCodeBlock ::= "{" [ DataDeclaration ] [ StatementOrNull ] "}";
 rules RsProd ::= 
 ProductionItem 
 | RsCodeBlock 
@@ -1919,11 +1961,11 @@ ProductionItem
 rules ProductionItem ::= ProductionIdentifier | ProductionIdentifier "(" ListOfArguments ")";
 rules RsIfElse ::= "if" "(" Expression ")" ProductionItem | "if" "(" Expression ")" ProductionItem "else" ProductionItem;
 rules RsRepeat ::= "repeat" "(" Expression ")" ProductionItem ;
-rules RsCase ::= "case" "(" CaseExpression ")" [ RsCaseItem ] "endcase"
+rules RsCase ::= "case" "(" CaseExpression ")" [ RsCaseItem ] "endcase";
 rules RsCaseItem ::= 
 [ CaseItemExpression ] ":" ProductionItem ";"
 | "default" ProductionItem ";"
-| "default" ":" ProductionItem ";"
+| "default" ":" ProductionItem ";";
 
 rules MaybeProductionIdentifier ::= | ProductionIdentifier;
 rules MaybeEnclosedTfPortList ::= | "(" TfPortList ")";
@@ -2037,10 +2079,10 @@ ParallelEdgeSensitivePathDescription "=" PathDelayValue
 
 rules ParallelEdgeSensitivePathDescription ::= 
 "(" MaybeEdgeIdentifier SpecifyInputTerminalDescriptor MaybePolarityOperator "=>"
-"(" SpecifyOutputTerminalDescriptor MaybePolarityOperator ":" DataSourceExpression ")" ")"
+"(" SpecifyOutputTerminalDescriptor MaybePolarityOperator ":" DataSourceExpression ")" ")";
 rules FullEdgeSensitivePathDescription ::= 
 "(" MaybeEdgeIdentifier ListOfPathInputs MaybePolarityOperator "*>"
-"(" ListOfPathOutputs MaybePolarityOperator ":" DataSourceExpression ")" ")"
+"(" ListOfPathOutputs MaybePolarityOperator ":" DataSourceExpression ")" ")";
 
 rules DataSourceExpression ::= Expression;
 rules EdgeIdentifier ::= "posedge" | "negedge" | "edge";
@@ -2093,7 +2135,7 @@ separator nonempty StreamExpression ",";
 rules ConstantFunctionCall ::= FunctionSubroutineCall;
 rules TfCall ::= 
 PsOrHierarchicalTfIdentifier [ AttributeInstance ] 
-| PsOrHierarchicalTfIdentifier [ AttributeInstance ] "(" ListOfArguments ")"
+| PsOrHierarchicalTfIdentifier [ AttributeInstance ] "(" ListOfArguments ")";
 
 rules SystemTfCall ::= 
 SystemTfIdentifier 
@@ -2114,7 +2156,7 @@ TfCall
 | RandomizeCall
 | "std::" RandomizeCall;
 
-rules MethodCall ::= MethodCallRoot "." MethodCallBody 
+rules MethodCall ::= MethodCallRoot "." MethodCallBody ;
 rules MethodCallBody ::= 
 MethodIdentifier [ AttributeInstance ] 
 | MethodIdentifier [ AttributeInstance ] "(" ListOfArguments ")" 
@@ -2141,13 +2183,13 @@ rules RandomizeCall ::=
 rules MethodCallRoot ::= Primary | ImplicitClassHandle ;
 rules ArrayMethodName ::= MethodIdentifier | "unique" | "and" | "or" | "xor";
 
-rules IdentiferContWithComma ::= "," "." Ident "(" MaybeExpression ")"
+rules IdentiferContWithComma ::= "," "." Ident "(" MaybeExpression ")";
 
 rules MaybeVariableIdentifierList ::= | VariableIdentifierList | "null";
 rules MaybeIdentifierList ::= | IdentifierList;
 
-seperator nonempty MaybeExpression ",";
-seperator IdentiferContWithComma "";
+separator nonempty MaybeExpression ",";
+separator IdentiferContWithComma "";
 
 -- A.8.3 Expressions (Done)
 rules IncOrDecExpression ::= 
@@ -2199,7 +2241,8 @@ ModulePathPrimary
 | UnaryModulePathOperator [ AttributeInstance ] ModulePathPrimary 
 | ModulePathExpression BinaryModulePathOperator [ AttributeInstance ] 
 ModulePathExpression 
-| ModulePathConditionalExpression 
+| ModulePathConditionalExpression ;
+
 rules ModulePathMintypmaxExpression ::= 
 ModulePathExpression 
 | ModulePathExpression ":" ModulePathExpression ":" ModulePathExpression;
@@ -2281,7 +2324,7 @@ rules Select ::=
 BitSelect 
 | BitSelect  "[" PartSelectRange "]"  
 | [MemberBitSelect] MemberBitSelect
-| [MemberBitSelect] MemberBitSelect  "[" PartSelectRange "]"  
+| [MemberBitSelect] MemberBitSelect  "[" PartSelectRange "]" ;
 
 rules NonrangeSelect ::= BitSelect | [MemberBitSelect] MemberBitSelect;
 
@@ -2378,7 +2421,7 @@ FixedPointNumber
 | UnsignedNumber "." UnsignedNumber Exp Sign UnsignedNumber;
 
 rules FixedPointNumber ::= UnsignedNumber "." UnsignedNumber;
-token Exp ("e" | "E");
+token Exp ('e' | 'E');
 
 rules UnsignedNumber ::= DecimalDigit [ MaybeUnderscoreOrDecimalDigit];
 rules BinaryValue ::= BinaryDigit [ MaybeUnderscoreOrBinaryDigit ];
@@ -2392,13 +2435,13 @@ token HexBase (('\''["sS"] 'h') | ('\''["sS"] 'H'));
 
 token NonZeroDecimalDigit ('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9');
 token DecimalDigit ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9');
-token BinaryDigit (XDigit | ZDigit | '0' | '1');
-token OctalDigit (XDigit | ZDigit | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7');
-token HexDigit (XDigit | ZDigit | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F');
+token BinaryDigit ( 'x' | 'X' | 'z' | 'Z' | '?' | '0' | '1');
+token OctalDigit ('x' | 'X' | 'z' | 'Z' | '?' | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7');
+token HexDigit ('x' | 'X' | 'z' | 'Z' | '?' | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F');
 token XDigit ('x' | 'X');
 token ZDigit ('z' | 'Z' | '?');
 
-token UnbasedUnsizedLiteral ( {"'0"} | {"'1"} | '\''ZOrX);
+token UnbasedUnsizedLiteral ( {"'0"} | {"'1"} | '\''["xXzZ"]);
 
 rules MaybeSize ::= | Size;
 rules MaybeUnderscoreOrDecimalDigit ::= "_" | DecimalDigit;
@@ -2411,9 +2454,11 @@ rules RepeatableUnderscore ::= | "_" | "_" RepeatableUnderscore;
 
 separator MaybeUnderscoreOrDecimalDigit "";
 separator MaybeUnderscoreOrBinaryDigit "";
+separator MaybeUnderscoreOrOctalDigit "";
+separator MaybeUnderscoreOrHexDigit "";
 
 -- A.8.8 Strings
-rule StringLiteral ::= "\"" String "\"";
+rules StringLiteral ::= "\"" String "\"";
 
 -- A.9 General 
 -- A.9.1 Attributes (Done)
@@ -2521,7 +2566,7 @@ rules SignalIdentifier ::= Ident ;
 rules SimpleIdentifier ::= Ident ;
 rules SpecparamIdentifier ::= Ident ;
 
-token SystemTfIdentifier ('$'String); 
+rules SystemTfIdentifier ::= "&"String; 
 
 rules TaskIdentifier ::= Ident ;
 rules TfIdentifier ::= Ident ;
@@ -2552,7 +2597,7 @@ separator nonempty Port ",";
 separator nonempty AttributeInstanceWithAnsiPortDeclaration ",";
 separator nonempty PortReference ",";
 separator nonempty BindTargetInstance ",";
-separator LocalParameterDeclaration ";"
+separator LocalParameterDeclaration ";";
 separator ConfigRuleStatement "";
 separator LibCellCombinedIdentifier "";
 separator InstanceIdentifierWithDot "";
